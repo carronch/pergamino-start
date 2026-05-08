@@ -33,7 +33,7 @@ After an ingest finishes:
 4. Check for emerging patterns:
    - Has this concept been referenced in 3+ summaries now? If so, it might warrant promotion from a passing mention to a full concept page (the **rule of three**).
    - Has this theme accumulated 5+ sources? Time to update its `## Current thesis`.
-   - Did the new source create a tension with another summary or a MainVault belief? Make sure that tension is captured, not buried.
+   - Did the new source create a tension with another summary or a Main{{SLUG}}Brain belief? Make sure that tension is captured, not buried.
 5. Append a 1–2 line maintain note to `wiki/log.md` *under* the ingest entry:
 
 ```
@@ -95,7 +95,7 @@ After every 10–20 ingests, surface a maintain offer to the author. Don't run i
 - It doesn't ingest new sources. (See `ingest`.)
 - It doesn't run external research. (See `deep-ingest`.)
 - It doesn't do schema or contradiction-checking. (See `lint`.)
-- It doesn't write to MainVault. Stage proposals in the tray.
+- It doesn't write to Main{{SLUG}}Brain. Stage proposals in the tray.
 
 ## The point of maintain
 

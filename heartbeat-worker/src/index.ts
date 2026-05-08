@@ -454,10 +454,10 @@ async function runCustomerBotWeekly(env: Env): Promise<void> {
   );
 
   // 3. For each proposed FAQ entry, open a PR against customer-facing/faq.md
-  //    (CEO + Daniel review per CODEOWNERS)
+  //    (principal + operator review per CODEOWNERS)
   await openFAQProposalPR(proposals, env);
 
-  // 4. Notify CEO + Daniel
+  // 4. Notify principal + operator
   for (const recipient of env.REVIEWER_DIGEST_RECIPIENTS.split(",")) {
     const phone = await resolvePhoneFromEmail(recipient.trim(), env);
     if (phone) {

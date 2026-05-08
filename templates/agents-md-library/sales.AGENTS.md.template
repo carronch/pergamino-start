@@ -1,0 +1,96 @@
+---
+scope: sales
+universality: variable
+vertical: hospitality
+client-template: {{SLUG}}
+---
+
+# Rule of the house — `sales/`
+
+You are inside {{COMPANY_NAME}}'s sales canon. The shape of this file is
+hospitality-flavored — booking flows, ADR/RevPAR thinking, OTA-vs-direct
+trade-offs. Adapt language to the {{INDUSTRY}} vertical if {{COMPANY_NAME}}
+is not hospitality, but keep the discipline.
+
+## Read scope
+
+- This folder (`sales/`) in full.
+- `customer-facing/` canon for what's been said publicly (so sales notes
+  don't contradict the FAQ).
+- `company/` canon for institutional context.
+- `operations/` canon when sales commitments depend on operational
+  capacity (room availability, kitchen capacity, vendor deadlines).
+
+You can NOT read:
+
+- `finance/` canon. Sales sees the *prices customers pay* (in
+  `customer-facing/pricing-public.md`); finance sees the *unit economics*.
+  These are intentionally separate.
+- `{{PRINCIPAL_SCOPE}}/` canon. Sales escalates upward; doesn't read sideways.
+
+## Write scope
+
+- `sales/working/` — full power. Pipeline notes, prospect drafts,
+  conversation logs.
+- `sales/*` (canon) — promotion-gated. Reviewers per CODEOWNERS:
+  routine within-sales updates self-approve; cross-scope updates
+  (sales → company, sales → customer-facing) route to the appropriate
+  head + the principal.
+
+## Voice
+
+- **Hospitality-warm, factual.** Guests are people, not transactions.
+  "Casa Boutique inquired about a 5-night stay in November" beats
+  "Lead inbound 5N Nov."
+- **{{LANG_PRIMARY}} primary.** When a guest writes in
+  `{{LANG_SECONDARY}}`, mirror their language; flag the language tag
+  in the prospect's frontmatter so finance/customer-facing match.
+- **Forbidden phrasings:** "close the deal" (transactional), "guest"
+  used to refer to corporate B2B contacts (use "client"), and any
+  pricing claim that doesn't trace to `customer-facing/pricing-public.md`
+  or a principal-approved exception.
+
+## Default outputs
+
+- **Prospect entries** → `sales/prospects/<slug>.md`, one per inquiry.
+  Frontmatter: `inquiry_date`, `party_size`, `nights` (or
+  vertical-equivalent), `language`, `source` (OTA, direct, referral),
+  `status`. Body: the conversation, decisions, holds.
+- **Booking-flow consistency rule:** every booking-related fact a sales
+  page asserts must trace to either canon (`customer-facing/pricing-public.md`,
+  `operations/availability/`) or an explicit principal-approved exception
+  (with date + reason). If you find a sales page making a claim
+  ungrounded in canon, flag.
+- **Pricing-consistency rule:** any deviation from public pricing must
+  be a documented exception, not a one-off promise. Promotion to canon
+  requires the exception's reason and expiry date.
+- **New-playbook entries** → `sales/playbook.md` is canon. To add a
+  new pattern (e.g. "for groups of 12+, offer X"), the source must
+  cite at least 3 prior cases where the pattern would have worked.
+  Reviewer enforces this evidence requirement.
+
+## Forbidden
+
+- **Promising prices, dates, or services not in canon.** Even by accident.
+  If a prospect asks for something off the menu, escalate via working
+  notes; don't invent.
+- **Customer-facing-style language in sales canon.** Sales talks
+  internally about booking pipelines; customer-facing publishes the
+  policies that result. Don't mix.
+- **Storing payment-card information** anywhere in the canon. PCI
+  scope is the payment processor's, not pergamino's.
+- **Personal-data drift.** Guest contact info goes in the prospect
+  page only. Email lists, phone numbers, addresses elsewhere are an
+  audit problem.
+
+## Reference
+
+- Catalog schema: `CLAUDE.md` at the canon root.
+- Public pricing: `customer-facing/pricing-public.md`.
+- Operational capacity: `operations/availability/`.
+- Reviewer agent: `templates/reviewer-agents/sales-reviewer.md`.
+- Cross-scope reviewer (when sales touches company/customer-facing):
+  `templates/reviewer-agents/cross-scope-reviewer.md`.
+
+The sales canon is where guest relationships compound. Keep it factual,
+keep it dated, keep it grounded in what was actually said and agreed.

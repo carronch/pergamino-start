@@ -28,7 +28,7 @@ When you receive a new artifact (a URL, a file path, a piece of text), this file
 A URL the author wants ingested:
 
 ```
-~/LLMVault/raw/web/<YYYY-MM-DD>-<slug>.md
+~/LLM{{SLUG}}Brain/raw/web/<YYYY-MM-DD>-<slug>.md
 ```
 
 The slug derives from the URL path (so the same URL always produces the same slug). Frontmatter:
@@ -43,7 +43,7 @@ fetched: <YYYY-MM-DD>
 ---
 ```
 
-If the URL points at a PDF, route to `~/LLMVault/raw/papers/` instead with `source_type: paper`.
+If the URL points at a PDF, route to `~/LLM{{SLUG}}Brain/raw/papers/` instead with `source_type: paper`.
 
 ## B. Local file routing
 
@@ -65,7 +65,7 @@ The author hands you a file path. Decide by extension and content:
 The author writes you a paragraph or pastes some text. Two routings:
 
 - **If it's a captured fact, observation, or thought** → `raw/notes/<YYYY-MM-DD>-<slug>.md` with `source_type: note`. Then ingest the note.
-- **If it's an instruction to you** (e.g., "remind me to..." or "make a note that...") → don't file it as a source. Update `~/LLMVault/wiki/log.md` and act on the instruction.
+- **If it's an instruction to you** (e.g., "remind me to..." or "make a note that...") → don't file it as a source. Update `~/LLM{{SLUG}}Brain/wiki/log.md` and act on the instruction.
 
 ## After routing — what triggers ingest?
 
@@ -75,20 +75,20 @@ Why not auto-ingest? Because the author may file something for later, or as back
 
 ## Special folders that aren't sources
 
-These folders are **not** ingest targets — they live in LLMVault but they're not sources to summarize:
+These folders are **not** ingest targets — they live in LLM{{SLUG}}Brain but they're not sources to summarize:
 
-- `~/LLMVault/wiki/` — the curated catalog (you write here, but you don't *ingest* it)
-- `~/LLMVault/outputs/` — staged proposals back to the author
-- `~/LLMVault/.cache/` — anything you generate as scratch space (cleared by `lint`)
+- `~/LLM{{SLUG}}Brain/wiki/` — the curated catalog (you write here, but you don't *ingest* it)
+- `~/LLM{{SLUG}}Brain/outputs/` — staged proposals back to the author
+- `~/LLM{{SLUG}}Brain/.cache/` — anything you generate as scratch space (cleared by `lint`)
 
 If the author hands you a file in any of these folders and asks to "ingest" it, pause and ask — they probably meant something else.
 
-## Tray (proposals back to MainVault)
+## Tray (proposals back to Main{{SLUG}}Brain)
 
-If your ingest produces a finding that should update a MainVault belief or principle, stage a proposal:
+If your ingest produces a finding that should update a Main{{SLUG}}Brain belief or principle, stage a proposal:
 
 ```
-~/LLMVault/outputs/mainvault-pending/<slug>.md
+~/LLM{{SLUG}}Brain/outputs/mainvault-pending/<slug>.md
 ```
 
 with the first line:
@@ -97,7 +97,7 @@ with the first line:
 <!-- target: beliefs/<filename>.md -->
 ```
 
-(or `<!-- target: principles/<filename>.md -->`, etc., depending on which MainVault folder it should land in)
+(or `<!-- target: principles/<filename>.md -->`, etc., depending on which Main{{SLUG}}Brain folder it should land in)
 
 The author promotes the file via a script or by hand. You never copy it yourself.
 

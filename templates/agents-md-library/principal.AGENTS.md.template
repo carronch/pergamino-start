@@ -1,0 +1,103 @@
+---
+scope: principal
+universality: universal
+vertical: any
+client-template: {{SLUG}}
+principal-name: {{PRINCIPAL_NAME}}
+principal-role: {{PRINCIPAL_ROLE}}
+---
+
+# Rule of the house — `{{PRINCIPAL_SCOPE}}/`
+
+You are inside {{PRINCIPAL_NAME}}'s personal scope as
+{{PRINCIPAL_ROLE}} of {{COMPANY_NAME}}. This is the lightest-touch scope
+in the brain — {{PRINCIPAL_NAME}} runs the company; the canon here is
+their working memory plus the strategic decisions they want logged.
+
+Trust calibration: this scope assumes the principal is the user. If a
+different employee somehow lands in this folder, they shouldn't have
+read access — that's enforced by GitHub team membership, not by this
+file. But this file's tone presumes the principal is reading.
+
+## Read scope
+
+- This folder (`{{PRINCIPAL_SCOPE}}/`) in full.
+- All other scopes' canon for context (the principal can read everything).
+- The MainBrain at `~/Main{{SLUG}}Brain/` — read-only, as always.
+
+The principal is the only role with full-canon read across the company.
+
+## Write scope
+
+- `{{PRINCIPAL_SCOPE}}/working/` — full power. Strategy notes, meeting
+  prep, scratch thinking.
+- `{{PRINCIPAL_SCOPE}}/*` (canon) — promotion-gated. Self-approval
+  counts here (single-author scope; CODEOWNERS routes to
+  `{{PRINCIPAL_NAME}}` themselves), but **the gate still runs** — every
+  canon edit produces a PR + audit-log entry, even if the principal
+  one-clicks-approves. The friction is the audit trail, not the second
+  pair of eyes.
+- Append-only on `{{PRINCIPAL_SCOPE}}/.audit-log.md` — every canon
+  change writes a one-line entry here automatically.
+
+## Voice
+
+- **First-person, the principal's own voice.** Notes here read as
+  {{PRINCIPAL_NAME}}'s thinking, not an institutional voice.
+- **Compress aggressively.** The principal reviews this in the margins of
+  long days. Tight bullets > loose paragraphs.
+- **Bias toward `working/`.** Most strategic notes start as drafts and
+  stay there. Promote to canon only when {{PRINCIPAL_NAME}} explicitly
+  decides it's worth keeping for the company's record.
+
+## Default outputs
+
+- **Decisions** the principal makes on their own → `{{PRINCIPAL_SCOPE}}/decisions/`.
+  Use `wiki-templates/decision.md`. The principal's reasoning, the
+  trade-off they accepted, what would change their mind.
+- **Meeting prep / debriefs** → `{{PRINCIPAL_SCOPE}}/working/meetings/`. Don't
+  promote routine debriefs; only promote ones that contain a decision
+  or commitment.
+- **Reads on people** → these belong in the MainBrain
+  (`~/Main{{SLUG}}Brain/people/`), not in this scope. Stage proposals to
+  the MainBrain via the tray, never write directly.
+- **Strategy artifacts** the company should inherit (e.g. annual plan,
+  org-design changes) → promote to `{{PRINCIPAL_SCOPE}}/strategy/` or to
+  `company/decisions/` depending on whether the artifact is principal's
+  position vs. company commitment.
+
+## Optional: local-only model
+
+For genuinely sensitive notes (M&A thinking, personnel, legal
+exposure), {{PRINCIPAL_NAME}} can mark the file with frontmatter:
+
+```yaml
+model: local-only: true
+```
+
+The pergamino runtime then routes that file's drafting and review
+through a local model (Ollama on the principal's laptop), never an
+external API. Use sparingly — local models are slower and weaker. The
+default is the standard cloud model.
+
+## Forbidden
+
+- **Writing to the MainBrain.** Even here. The MainBrain is the
+  principal's hand-curated zone; staged proposals go through the tray
+  at `~/LLM{{SLUG}}Brain/outputs/mainvault-pending/`.
+- **Speaking publicly on behalf of the company.** Customer-facing
+  copy is its own scope, with its own reviewer.
+- **Bypassing the audit log.** Even one-click self-approvals produce
+  a PR + entry. If {{PRINCIPAL_NAME}} ever needs to take an action
+  that wouldn't audit cleanly, that's the moment to stop and reconsider,
+  not to find a workaround.
+
+## Reference
+
+- Catalog schema: `CLAUDE.md` at the canon root.
+- Routing: `RESOLVER.md` at the canon root.
+- The MainBrain: `~/Main{{SLUG}}Brain/`.
+- Reviewer agent: `templates/reviewer-agents/principal-reviewer.md`.
+
+This file is light because the principal is trusted. The audit trail
+does the heavy lifting.
