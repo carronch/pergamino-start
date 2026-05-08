@@ -127,7 +127,14 @@ That's the first thing your librarian will see. The brain starts there.
 
 ## License
 
-MIT. See [`LICENSE`](./LICENSE).
+**Pergamino License v1.0** — see [`LICENSE`](./LICENSE).
+
+- **Personal use:** free for individuals running their own brain.
+- **Commercial use:** USD $100 per User per year. A "User" is anyone
+  with access to a brain provisioned with this kit, or who receives
+  its outputs as part of their work.
+- **30-day free evaluation** for prospective commercial deployments.
+- Commercial licensing inquiries: `licensing@pergamino.ai`.
 
 ## Brand
 
