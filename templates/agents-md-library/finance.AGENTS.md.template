@@ -1,0 +1,111 @@
+---
+scope: finance
+universality: variable
+vertical: mostly-transferable
+client-template: {{SLUG}}
+---
+
+# Rule of the house — `finance/`
+
+You are inside {{COMPANY_NAME}}'s finance canon. **This scope is the
+strictest in the brain alongside `customer-facing/`** — for opposite
+reasons. Customer-facing is strict because the world reads it; finance
+is strict because the numbers must reconcile to the cent and the audit
+trail must survive a tax inspection or due-diligence pass.
+
+This file is largely vertical-agnostic. Numbers behave the same in
+hospitality, real estate, retail, or services.
+
+## Read scope
+
+- This folder (`finance/`) in full.
+- `company/` canon for institutional context.
+- `operations/vendors/` (read) — to cross-check operational vendor
+  relationships against the finance vendor records.
+
+You can NOT read:
+
+- Other employees' personal `working/` folders.
+- `sales/` canon. Sales sees public prices; finance sees unit economics.
+- `customer-facing/` canon — beyond the public-pricing page, which is
+  intentionally a one-way contract: finance sets the public number,
+  customer-facing publishes it. Finance doesn't read what customer-facing
+  is saying about prices; finance sets what prices customer-facing may say.
+- `{{PRINCIPAL_SCOPE}}/` canon.
+
+## Write scope
+
+- `finance/working/` — full power. Drafts, scenario models, AI
+  conversations about reconciliation.
+- `finance/*` (canon) — promotion-gated, **with an extra layer:** all
+  cross-scope updates from finance route to {{PRINCIPAL_NAME}} + the operator.
+  No within-scope shortcut.
+- **Append-only on `finance/reports/`** and on `finance/audit-trail.md`.
+  CI rejects PRs that modify or delete prior entries. To correct a
+  past report, add a new dated entry that references and supersedes
+  the original. The original stays.
+- **Bias hard toward `working/`.** Most finance work — exploratory
+  analysis, draft models, cash-flow scenarios — never promotes. Promote
+  only when the artifact is a fact for the record (a closed report, a
+  reconciled month, an audited statement).
+
+## Voice
+
+- **Numbers reconcile.** Every number on a finance page must trace
+  to a source: an invoice, a bank statement, a contract. If you can't
+  trace it, leave the field empty and flag.
+- **Currency tagging mandatory.** Every monetary figure carries its
+  currency: `42,500 {{CURRENCY_PRIMARY}}` (or `USD`, `EUR`, etc.).
+  Mixing currencies without tags is the #1 failure mode in early
+  finance canons.
+- **Period clarity mandatory.** "Q3 revenue: 1.2M {{CURRENCY_PRIMARY}}"
+  is incomplete; write "Q3 2026 revenue (Jul–Sep): 1,234,567 {{CURRENCY_PRIMARY}}".
+  Periods can shift; absolute dates can't.
+- **Forbidden phrasings:** "approximately", "around", "in the
+  neighborhood of." If the number is rough, write the actual number
+  and the confidence interval; don't smooth it editorially.
+
+## Default outputs
+
+- **Reports** → `finance/reports/<period>/<slug>.md`. Append-only.
+  Always include source citations: which bank statement, which
+  invoice, which entry in the accounting system this number came from.
+- **Reconciliations** → `finance/working/reconciliations/<period>.md`.
+  These don't promote; they're the working record of the matching pass.
+  When the period closes cleanly, a *summary* report promotes; the raw
+  reconciliation stays in `working/`.
+- **Vendor financial records** → `finance/vendors/<slug>.md`. Contract
+  amounts, payment terms, dispute history. Cross-check with
+  `operations/vendors/` quarterly.
+- **Decisions with financial bearing** → `finance/decisions/<slug>.md`.
+  Use `wiki-templates/decision.md`. Include the financial scenario
+  modeled, the assumption sensitivities, the trigger that would change
+  the decision.
+
+## Forbidden
+
+- **Writing to past reports.** Append-only is the architecture, not
+  a guideline. If a number was wrong, write a new dated correction
+  that supersedes; never edit the original.
+- **Mixing currencies without tags.** Even in a draft. Build the
+  habit in `working/` so the canon never fails it.
+- **Sharing finance numbers via customer-facing.** Public pricing is
+  the *only* finance number that reaches `customer-facing/` — and it
+  reaches via principal approval, not by direct write.
+- **Speculative reports.** Forecasts go in `finance/working/` clearly
+  labeled as forecasts. Reports in `finance/reports/` are reconciled
+  facts only.
+- **Tax positions without source.** Every tax claim must cite the
+  rule, the regulation, or the advisor's letter. Plain assertion is
+  not enough in this scope.
+
+## Reference
+
+- Catalog schema: `CLAUDE.md` at the canon root.
+- Public-pricing source-of-truth: `finance/decisions/<pricing-slug>.md`,
+  which `customer-facing/pricing-public.md` references.
+- Operations vendor entries: `operations/vendors/`.
+- Reviewer agent: `templates/reviewer-agents/finance-reviewer.md`.
+
+When in doubt, leave it in `working/`. The canon is for what survives
+reconciliation, not for what's still being figured out.

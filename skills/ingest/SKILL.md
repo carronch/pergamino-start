@@ -1,13 +1,13 @@
 # Skill: Ingest a new source
 
-Run this when the author hands you a file in `~/LLMVault/raw/` or asks you to "ingest" something.
+Run this when the author hands you a file in `~/LLM{{SLUG}}Brain/raw/` or asks you to "ingest" something.
 
 ## Triggers
 
 - *"Ingest this article"*
 - *"Process this paper"*
 - *"Read [URL] and add it to the wiki"*
-- A new file appears in `~/LLMVault/raw/` with `processed: false` and the author asks you to handle it.
+- A new file appears in `~/LLM{{SLUG}}Brain/raw/` with `processed: false` and the author asks you to handle it.
 
 ## Steps
 
@@ -29,7 +29,7 @@ Wait for a go-ahead or a redirect. The author may want a different theme assignm
 ### 3. Pre-ingest orientation
 
 Quickly read:
-- The last 3–5 entries of `~/LLMVault/wiki/log.md` — to know what's been touched recently.
+- The last 3–5 entries of `~/LLM{{SLUG}}Brain/wiki/log.md` — to know what's been touched recently.
 - The `_index.md` section headings relevant to this source's topic.
 - Any concept or theme pages your summary might cite.
 
@@ -37,7 +37,7 @@ This is a 30-second pass. You're orienting, not researching.
 
 ### 4. Create the summary page
 
-Write `~/LLMVault/wiki/summaries/<slug>.md`. The slug matches the source file's slug (so `raw/web/2026-05-06-foo.md` produces `summaries/foo.md`).
+Write `~/LLM{{SLUG}}Brain/wiki/summaries/<slug>.md`. The slug matches the source file's slug (so `raw/web/2026-05-06-foo.md` produces `summaries/foo.md`).
 
 Use the structure in `CLAUDE.md` (`type: summary` page schema): TL;DR, key claims, tools/concepts/projects mentioned, connections to existing context, tension with truth (if any), open threads, timeline.
 
@@ -60,24 +60,24 @@ For **existing** entity pages: add a citation to the new summary, update relevan
 
 For **new** entity pages: write the page following the schema in `CLAUDE.md`. Apply the **rule of three** — don't promote a one-off mention to a concept page unless it's been referenced in at least 3 sources or the author asks.
 
-### 7. Check against MainVault
+### 7. Check against Main{{SLUG}}Brain
 
-Search MainVault for any belief, principle, or life-decision that this source bears on. If MainVault has a position, mention it in the summary's `## Connections` section: *"This aligns with `MainVault: beliefs/<slug>.md`"* or *"This contradicts `MainVault: beliefs/<slug>.md` — see Tension with truth."*
+Search Main{{SLUG}}Brain for any belief, principle, or life-decision that this source bears on. If Main{{SLUG}}Brain has a position, mention it in the summary's `## Connections` section: *"This aligns with `Main{{SLUG}}Brain: beliefs/<slug>.md`"* or *"This contradicts `Main{{SLUG}}Brain: beliefs/<slug>.md` — see Tension with truth."*
 
-If a contradiction is meaningful enough to warrant updating the author's belief, **stage a proposal** at `~/LLMVault/outputs/mainvault-pending/<slug>.md` with a `<!-- target: beliefs/<filename>.md -->` marker.
+If a contradiction is meaningful enough to warrant updating the author's belief, **stage a proposal** at `~/LLM{{SLUG}}Brain/outputs/mainvault-pending/<slug>.md` with a `<!-- target: beliefs/<filename>.md -->` marker.
 
-**Never edit MainVault directly.** Stage and let the author decide.
+**Never edit Main{{SLUG}}Brain directly.** Stage and let the author decide.
 
 ### 8. Update the index and log
 
-- Add the new summary to `~/LLMVault/wiki/_index.md` under the appropriate section.
-- Append to `~/LLMVault/wiki/log.md`:
+- Add the new summary to `~/LLM{{SLUG}}Brain/wiki/_index.md` under the appropriate section.
+- Append to `~/LLM{{SLUG}}Brain/wiki/log.md`:
 
 ```
 ## [YYYY-MM-DD] ingest | <source title>
 - summary: wiki/summaries/<slug>.md
 - entities touched: <one-line list of pages updated>
-- MainVault check: <aligns | tension staged | no relevant content>
+- Main{{SLUG}}Brain check: <aligns | tension staged | no relevant content>
 ```
 
 One self-contained entry. Append-only.
@@ -103,7 +103,7 @@ Then report to the author in chat. Under 10 lines:
 - **One source, one ingest.** Don't batch unless the author explicitly asks.
 - **15 file threshold.** A healthy ingest touches 10–15 pages. If you'd touch more than 15, pause and ask the author. You're either being over-eager or the source warrants a synthesis (which the author writes).
 - **Never write to `raw/`** — sources are immutable.
-- **Never write to MainVault** — stage proposals in the tray.
+- **Never write to Main{{SLUG}}Brain** — stage proposals in the tray.
 - **Citations on every factual claim.**
 - **Default to no auto-ingest.** A file landing in `raw/` does not get processed until the author says so.
 

@@ -1,0 +1,96 @@
+---
+scope: operations
+universality: variable
+vertical: hospitality
+client-template: {{SLUG}}
+---
+
+# Rule of the house — `operations/`
+
+You are inside {{COMPANY_NAME}}'s operations canon. The shape is
+hospitality-flavored — runbooks, vendor relationships, shift
+handoffs, incident logs. Adapt to the {{INDUSTRY}} vertical's
+operational patterns if needed; keep the runbook hygiene.
+
+## Read scope
+
+- This folder (`operations/`) in full.
+- `company/` for institutional context.
+- `customer-facing/policies/` (read) so ops decisions don't contradict
+  what's been promised to guests/customers.
+- `finance/` for vendor pricing context — but ops doesn't write to
+  finance, and finance reports are append-only across the gate.
+
+You can NOT read:
+
+- Other employees' personal `working/` folders.
+- `sales/prospects/` (sales pipeline is sales' to manage; ops sees
+  confirmed bookings via `operations/availability/`).
+- `{{PRINCIPAL_SCOPE}}/` canon.
+
+## Write scope
+
+- `operations/working/` — full power. Shift notes, draft runbooks,
+  vendor-call summaries.
+- `operations/*` (canon) — promotion-gated. Reviewer per CODEOWNERS:
+  routine ops updates self-approve; cross-scope updates route to the
+  appropriate head + the principal.
+- **Append-only on `operations/incidents/`.** CI rejects PRs that
+  modify or delete prior incident entries. To "correct" a past
+  incident, add a new entry referencing the original.
+
+## Voice
+
+- **Operational-direct.** "Boiler #2 failed at 03:14; backup activated;
+  vendor contacted at 06:00." Not "We had a small issue overnight."
+- **Times in {{TIMEZONE_IANA}}.** Always include the timezone in
+  incident timestamps. The canon outlives the on-call shift; readers
+  may be in another timezone reading later.
+- **Forbidden phrasings:** "we had no choice", "everything's fine
+  now", "a slight inconvenience". Operational records are post-mortem
+  source material; minimize editorial spin.
+
+## Default outputs
+
+- **Runbooks** → `operations/runbooks/<slug>.md` with the four mandatory
+  sections: **Trigger** (what condition starts this runbook), **Steps**
+  (numbered, each independently executable), **Escalation** (when this
+  runbook isn't enough — who to call, when), **Owner** (the role, not
+  the person, that maintains this runbook).
+  Reviewer enforces all four sections present and non-empty.
+- **Shift handoffs** → `operations/working/shift-handoffs/<YYYY-MM-DD>-<shift>.md`.
+  Stay in `working/`; don't promote routine handoffs to canon. Promote
+  only if a handoff documents a permanent operational change.
+- **Vendor entries** → `operations/vendors/<slug>.md`. What they do,
+  contract dates, contact info, escalation path, the expected SLA.
+  **Cross-check vendor entries with `finance/vendors/` quarterly.**
+  Mismatches between operational reality and the financial relationship
+  flag for review.
+- **Incident reports** → `operations/incidents/<YYYY-MM-DD>-<slug>.md`.
+  What happened, when, what was done, what to change. Append-only.
+
+## Forbidden
+
+- **Editing past incidents.** Add a new entry that references the
+  original; never rewrite. (Append-only is CI-enforced; the runtime
+  rule reinforces it.)
+- **Skipping escalation paths.** If a runbook step says "page the
+  on-call vendor," that's the path. Don't write notes that bypass it
+  ("usually we just try X first") — propose a runbook update via PR
+  if X belongs in the runbook.
+- **Storing customer PII in ops canon.** Guest contact info that ops
+  needs (e.g. for an in-progress incident) lives transiently in
+  `operations/working/`; once the incident closes, redact.
+- **Pricing decisions.** Ops sees vendor invoices; ops doesn't set
+  vendor prices or customer prices. Pricing decisions go through
+  finance + principal.
+
+## Reference
+
+- Catalog schema: `CLAUDE.md` at the canon root.
+- Customer-facing promises: `customer-facing/policies/`.
+- Finance side of vendor relationships: `finance/vendors/`.
+- Reviewer agent: `templates/reviewer-agents/operations-reviewer.md`.
+
+The ops canon is the institutional muscle memory of how things actually
+get done. Keep it clean and a new hire can run a shift on day three.

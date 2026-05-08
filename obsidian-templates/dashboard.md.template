@@ -1,0 +1,276 @@
+---
+kind: synthesis
+title: "Wiki Dashboard"
+tags: [dashboard]
+created: {{date}}
+---
+
+# Wiki Dashboard
+
+Live views over the vault. Requires the **Dataview plugin** in Obsidian.
+(Settings → Community plugins → Browse → search "Dataview" → install + enable.)
+
+**Do not hand-edit this file** — edit the queries if you want different
+views; don't edit the rendered tables.
+
+---
+
+## Your portfolio
+
+```dataview
+TABLE
+  legal_entity,
+  stage,
+  status,
+  updated as "Last touched"
+FROM "wiki/businesses"
+SORT status ASC, updated DESC
+```
+
+---
+
+## Per-business detail
+
+For each operating business, this shows active projects, open decisions,
+and relevant themes. Add a new business? It appears automatically.
+
+### {{ENTITY_EXAMPLE_1}}
+
+**Active projects:**
+```dataview
+LIST
+FROM "wiki/projects"
+WHERE business = "{{ENTITY_EXAMPLE_1}}" AND status = "active"
+```
+
+**Recent decisions:**
+```dataview
+LIST
+FROM "wiki/decisions"
+WHERE business = "{{ENTITY_EXAMPLE_1}}"
+SORT date DESC
+LIMIT 5
+```
+
+### {{ENTITY_EXAMPLE_2}}
+
+```dataview
+LIST
+FROM "wiki/projects"
+WHERE business = "{{ENTITY_EXAMPLE_2}}" AND status = "active"
+```
+
+```dataview
+LIST
+FROM "wiki/decisions"
+WHERE business = "{{ENTITY_EXAMPLE_2}}"
+SORT date DESC
+LIMIT 5
+```
+
+<!-- Add additional business sections as new entities are added to the portfolio. -->
+
+---
+
+## Ventures (pre-commitment)
+
+```dataview
+TABLE
+  stage,
+  revisit_after as "Revisit",
+  updated
+FROM "wiki/ventures"
+WHERE stage != "committed" AND stage != "killed"
+SORT updated DESC
+```
+
+**Ventures overdue for commit/kill decision** (12+ months old, still undecided):
+
+```dataview
+TABLE
+  stage,
+  created as "Started thinking"
+FROM "wiki/ventures"
+WHERE created < date(today) - dur(365 days)
+AND stage != "committed" AND stage != "killed"
+SORT created ASC
+```
+
+---
+
+## Research — by cluster
+
+### Work-adjacent (feeds businesses and ventures)
+
+```dataview
+TABLE
+  updated as "Last deepened",
+  length(file.inlinks) as "Inbound links"
+FROM "wiki/themes"
+WHERE cluster = "work"
+SORT updated DESC
+```
+
+### Interest (pure curiosity)
+
+```dataview
+TABLE
+  updated as "Last deepened"
+FROM "wiki/themes"
+WHERE cluster = "interest"
+SORT updated DESC
+```
+
+### Teaching (producing output for others)
+
+```dataview
+TABLE
+  updated as "Last deepened"
+FROM "wiki/themes"
+WHERE cluster = "teaching"
+SORT updated DESC
+```
+
+---
+
+## Research — thinkers
+
+```dataview
+TABLE
+  length(known_for) as "#signature ideas",
+  updated
+FROM "wiki/thinkers"
+SORT updated DESC
+```
+
+---
+
+## Research — mental models
+
+```dataview
+TABLE
+  origin as "From",
+  updated
+FROM "wiki/concepts"
+WHERE subkind = "mental-model"
+SORT updated DESC
+```
+
+Mental models without counterexamples are incomplete — run the lint skill
+to find them.
+
+---
+
+## Tools in use
+
+```dataview
+TABLE
+  category,
+  length(related_projects) as "Used in",
+  updated
+FROM "wiki/tools"
+SORT category ASC, title ASC
+```
+
+**Tools thin on experience** (no update in 60+ days):
+
+```dataview
+LIST
+FROM "wiki/tools"
+WHERE updated < date(today) - dur(60 days)
+SORT updated ASC
+LIMIT 10
+```
+
+---
+
+## Recent activity
+
+**Summaries ingested in the last 14 days:**
+
+```dataview
+TABLE
+  source_type,
+  source_date as "Source date",
+  created as "Ingested"
+FROM "wiki/summaries"
+WHERE created >= date(today) - dur(14 days)
+SORT created DESC
+```
+
+**Any wiki page updated in the last 7 days:**
+
+```dataview
+LIST "(" + kind + ") " + title
+FROM "wiki"
+WHERE updated >= date(today) - dur(7 days)
+AND !contains(file.path, "index.md")
+AND !contains(file.path, "log.md")
+AND !contains(file.path, "RESOLVER.md")
+AND !contains(file.name, "README")
+SORT updated DESC
+```
+
+---
+
+## Stale alert
+
+**Active projects with no update in 30 days:**
+
+```dataview
+TABLE
+  business,
+  updated as "Last update"
+FROM "wiki/projects"
+WHERE status = "active"
+AND updated < date(today) - dur(30 days)
+SORT updated ASC
+```
+
+Active + no recent activity = drift. Change `status` to `paused` or
+`shipped`, or actually work on it.
+
+**Decisions 90+ days old worth revisiting:**
+
+```dataview
+TABLE
+  business,
+  date
+FROM "wiki/decisions"
+WHERE status = "accepted"
+AND date < date(today) - dur(90 days)
+SORT date ASC
+LIMIT 10
+```
+
+---
+
+## Maintenance reports
+
+```dataview
+LIST
+FROM "wiki/syntheses"
+WHERE contains(tags, "maintenance")
+SORT file.name DESC
+LIMIT 12
+```
+
+Read in order to see the brain's evolution.
+
+---
+
+## Adding your own queries
+
+Dataview syntax: https://blacksmithgu.github.io/obsidian-dataview/
+
+Common patterns:
+
+- `TABLE field1, field2 FROM "folder" WHERE condition` — tables
+- `LIST FROM "folder"` — just the file links
+- `WHERE business = "slug"` — filter by parent business
+- `WHERE cluster = "work"` — filter themes by cluster
+- `WHERE created >= date(today) - dur(30 days)` — time filter
+- `SORT field DESC` — ordering
+
+The agent can write queries for you — just ask. Every page it creates
+carries the frontmatter these queries need.

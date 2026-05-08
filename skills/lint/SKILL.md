@@ -11,7 +11,7 @@ Walk through theme pages and concept pages. For each `## Current thesis` or `## 
 When you find contradictions:
 - If both claims cite different sources, that's normal disagreement — note it on the page as *"Sources differ; see X vs. Y."*
 - If both claims cite the same source, one of them is wrong. Flag for the author to review.
-- If one of the claims contradicts a MainVault belief, **stage a proposal** in `outputs/mainvault-pending/` describing the discrepancy. The author decides which is right.
+- If one of the claims contradicts a Main{{SLUG}}Brain belief, **stage a proposal** in `outputs/mainvault-pending/` describing the discrepancy. The author decides which is right.
 
 ### 2. Orphans
 
@@ -86,7 +86,7 @@ Don't auto-fix anything in the **Critical** category — surface and wait. **Imp
 
 - **Lint is read-mostly.** Its job is to surface, not to act.
 - **Never delete pages.** Archive, propose archival, but don't delete. The author keeps the substrate's git history; deletion is a manual choice.
-- **Never edit MainVault.** Stage proposals.
+- **Never edit Main{{SLUG}}Brain.** Stage proposals.
 - **Don't lint during an ingest.** They're separate operations. Linting mid-ingest causes noise.
 
 ## After lint
@@ -102,5 +102,5 @@ Append to `wiki/log.md`:
 
 ## What this skill does not do
 
-- It does not run automated cleanup that requires judgment. Human-in-the-loop on contradictions, archival, MainVault staging.
+- It does not run automated cleanup that requires judgment. Human-in-the-loop on contradictions, archival, Main{{SLUG}}Brain staging.
 - It does not run on a schedule. It runs when the author invokes it.

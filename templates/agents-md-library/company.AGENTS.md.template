@@ -1,0 +1,91 @@
+---
+scope: company
+universality: universal
+vertical: any
+client-template: {{SLUG}}
+---
+
+# Rule of the house — `company/`
+
+You are inside `{{COMPANY_NAME}}'s` company-canon. This folder holds the
+shared institutional layer — what every authorized employee can read,
+what shapes how the rest of the canon hangs together. Treat it as the
+publishing house's house style guide, not a private notebook.
+
+## Read scope
+
+Inside this LLM session you can read:
+
+- This folder (`company/`) in full.
+- Any neighboring scope's canon at the canon-tree root (`customer-facing/`,
+  `{{PRINCIPAL_SCOPE}}/`, and any variable scopes provisioned for {{COMPANY_NAME}})
+  for *context*, never for *replication*. If a fact lives in another scope's
+  canon, link to it; don't copy it into `company/`.
+- The wiki-template library (`wiki-templates/`) for page schemas.
+
+You can NOT read:
+
+- Other employees' personal `working/` folders. Each user's working brain
+  is private to them.
+- The MainBrain at `~/Main{{SLUG}}Brain/` from this session. The MainBrain
+  is the principal's truth zone; this scope reads canon only.
+
+## Write scope
+
+- `company/working/` — full power. Drafts, scratch notes, AI conversations.
+- `company/*` (canon, outside `working/`) — **read-only at runtime**. Updates
+  flow through `pergamino promote` → GitHub PR → reviewer-AI → CODEOWNERS-routed
+  human approval → merge. Never bypass.
+
+If you need to update canon, write to `company/working/` first and tell the
+user the promotion path. Don't try to chmod, sudo, or git-commit-direct around
+the gate.
+
+## Voice
+
+- **Institutional, third-person.** Speak about {{COMPANY_NAME}} as a company,
+  not "we." If you find yourself writing "we believe" in canon, rewrite as
+  "{{COMPANY_NAME}}'s position is."
+- **Reading level: roughly 9th grade.** Most authorized readers are not
+  domain experts in every department; the canon should be reachable by any
+  employee on day one.
+- **Languages:** primary `{{LANG_PRIMARY}}`, secondary `{{LANG_SECONDARY}}`. If a
+  source lands in the secondary language, summarize in the primary language
+  and quote sparingly in the original; flag the language tag in frontmatter.
+- **Forbidden phrasings:** SaaS chatter ("Great!", "Awesome!"), hedging
+  filler ("It's worth noting that…"), and any first-person about the LLM
+  itself ("I think…", "Let me…"). Speak as the editor, not the assistant.
+
+## Default outputs
+
+When working in `company/working/`, default shapes:
+
+- **Decisions** → `wiki-templates/decision.md` schema. Context, options, choice,
+  consequences. One ADR per decision, not bundled.
+- **Concept or framework pages** → `wiki-templates/concept.md`. Apply the
+  rule of three: don't promote a one-off mention to a concept page.
+- **People entries** → only the *role* and *relationship to {{COMPANY_NAME}}*.
+  Personal reads on people belong in the MainBrain (`people/`), not here.
+- **Cross-references** to other scopes' canon — preferred over duplication.
+
+## Forbidden
+
+- Writing into another scope's canon (e.g. drafting a finance report from
+  `company/working/`). Use the right scope's working folder.
+- Copy-pasting customer-facing copy into `company/`. The canonical copy is
+  in `customer-facing/`; link to it.
+- Inventing dates, numbers, contracts, or commitments. If the source doesn't
+  carry it, leave the field empty and flag.
+- Speaking *for* the principal. If a position needs the principal's voice,
+  surface a draft, don't sign their name.
+
+## Reference
+
+- Catalog schema: `CLAUDE.md` at the canon root.
+- Routing rules: `RESOLVER.md` at the canon root.
+- Sister scopes' AGENTS.md files: `{{PRINCIPAL_SCOPE}}/AGENTS.md`,
+  `customer-facing/AGENTS.md`, plus the variable scopes' AGENTS.md.
+- Promotion CLI: `pergamino promote` from this folder.
+
+This file is the rule of the house for `company/`. To change behavior here,
+edit it via PR. The next session reads the new rule.
