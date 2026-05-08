@@ -1,0 +1,48 @@
+name = "pergamino-heartbeat"
+main = "src/index.ts"
+compatibility_date = "2026-05-07"
+compatibility_flags = ["nodejs_compat"]
+
+# === Cron Triggers ===
+# All times are in UTC; convert from client's local tz at deploy time.
+# Heartbeat schedule per pergamino-intake YAML.
+[triggers]
+crons = [
+  "30 14 * * 1-5",  # 8:30am Costa Rica (UTC-6) — reviewer-digest
+  "0 0 * * 2-6",    # 6:00pm Costa Rica weekdays — user-nudge (next-day UTC)
+  "0 3 * * 1"       # Sunday 9:00pm Costa Rica — customer-bot-weekly (Monday UTC)
+]
+
+# === KV bindings ===
+# Conversation memory, audit log buffer, pending-PR cache
+[[kv_namespaces]]
+binding = "PERGAMINO_KV"
+id = "<provisioned at deploy time>"
+
+# === D1 binding ===
+# Per-PR review history, customer conversations, knowledge-gap log
+[[d1_databases]]
+binding = "PERGAMINO_DB"
+database_name = "pergamino-<client-slug>"
+database_id = "<provisioned at deploy time>"
+
+# === Secrets (set via `wrangler secret put`) ===
+# ANTHROPIC_API_KEY      — client's Anthropic API key
+# GITHUB_TOKEN           — fine-grained PAT with brain-canon read+write
+# WHATSAPP_TOKEN         — Meta Cloud API token (for digest delivery)
+# WHATSAPP_PHONE_ID      — Meta phone number ID
+# WHATSAPP_VERIFY_TOKEN  — webhook verification
+# REVIEWER_AGENTS_REPO   — github.com/<org>/pergamino-reviewer-agents (or branch ref)
+
+# === Vars (non-secret config; live in wrangler.toml) ===
+[vars]
+CLIENT_SLUG = "mawamba"
+CLIENT_DISPLAY = "Mawamba Lodge"
+CLIENT_TZ = "America/Costa_Rica"
+BRAIN_CANON_REPO = "carronch/mawamba-brain-canon"
+DEFAULT_CHANNEL = "whatsapp"
+REVIEWER_DIGEST_RECIPIENTS = "ceo@mawamba.com,daniel@treeseed.org"
+USER_NUDGE_RECIPIENTS = "ALL_TEAM"  # uses GitHub team membership
+CUSTOMER_FACING_ENABLED = "true"
+LLM_MODEL_DEFAULT = "claude-sonnet-4-6"
+LLM_MODEL_CHEAP = "claude-haiku-4-5"
