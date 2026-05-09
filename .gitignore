@@ -13,3 +13,13 @@ Thumbs.db
 # User-specific install state (never committed)
 .pergamino/
 .installed
+
+# Aider runtime artifacts and local config
+.aider*
+.env
+
+# Offline-session scratch (playbook + reviewer-agents copies for aider)
+.context/
+
+# Wrangler local cache (contains CF account ID — never commit)
+.wrangler/

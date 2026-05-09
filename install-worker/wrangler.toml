@@ -1,0 +1,24 @@
+name = "pergamino-install"
+main = "src/index.ts"
+compatibility_date = "2026-05-08"
+
+# Workers.dev URL stays enabled so the install endpoint is reachable
+# even before pergamino.ai is on Cloudflare. After the nameserver move,
+# uncomment the [[routes]] block below and `wrangler deploy` again.
+workers_dev = true
+
+# Public install endpoint: https://pergamino.ai/install
+# Activate this once pergamino.ai's nameservers point at Cloudflare:
+#   1. Dashboard → Add Site → enter pergamino.ai (Free plan is fine)
+#   2. Update NS at Spaceship registrar to the pair Cloudflare provides
+#   3. Wait for DNS propagation (usually <30 min)
+#   4. Uncomment the [[routes]] block below and `wrangler deploy`
+#
+# [[routes]]
+# pattern = "pergamino.ai/install*"
+# zone_name = "pergamino.ai"
+
+# === Vars (non-secret config) ===
+[vars]
+BOOTSTRAP_URL = "https://raw.githubusercontent.com/carronch/pergamino-start/main/bootstrap.sh"
+CACHE_TTL_SECONDS = "300"
