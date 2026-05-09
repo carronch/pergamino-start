@@ -6,7 +6,7 @@
 #
 # To wire the URL: in Cloudflare, add a Page Rule on `pergamino.ai/install`
 # that 301-redirects to:
-#   https://raw.githubusercontent.com/{{ORG}}/pergamino-start/main/bootstrap.sh
+#   https://raw.githubusercontent.com/carronch/pergamino-start/main/bootstrap.sh
 # Or serve it via a tiny Cloudflare Worker / Pages function. Either works.
 #
 # What this script does (in order):
@@ -18,13 +18,13 @@
 #   6. Print clear next steps.
 #
 # Idempotent. Safe to re-run. Override via env vars:
-#   PERGAMINO_REPO   default: https://github.com/{{ORG}}/pergamino-start.git
+#   PERGAMINO_REPO   default: https://github.com/carronch/pergamino-start.git
 #   PERGAMINO_HOME   default: $HOME/Pergamino
 #   PERGAMINO_LLM    default: claude  (also: aider | gemini | none)
 
 set -euo pipefail
 
-PERGAMINO_REPO="${PERGAMINO_REPO:-https://github.com/{{ORG}}/pergamino-start.git}"
+PERGAMINO_REPO="${PERGAMINO_REPO:-https://github.com/carronch/pergamino-start.git}"
 PERGAMINO_HOME="${PERGAMINO_HOME:-$HOME/Pergamino}"
 PERGAMINO_LLM="${PERGAMINO_LLM:-claude}"
 
