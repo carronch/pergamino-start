@@ -15,10 +15,25 @@ This kit supports two shapes:
 For a solopreneur or a CEO running their own brain. Install and configure
 in 30 minutes.
 
+**One-line install (recommended):**
+
+```sh
+curl -fsSL pergamino.ai/install | bash
+```
+
+This bootstraps everything — checks for `git`, clones the kit to
+`~/Pergamino`, runs `install.sh`, and best-effort installs Claude as
+your LLM. Override the LLM with `PERGAMINO_LLM=aider | gemini | none`.
+
+**Manual install (if you prefer):**
+
   1. `git clone https://github.com/{{ORG}}/pergamino-start ~/Pergamino`
   2. `cd ~/Pergamino && bash install.sh`
   3. Open `claude` (or `aider`/`gpt`/`gemini`) in this folder.
-  4. Run `/pergamino-intake`. Answer the interview as the operator.
+
+**Then, in either case:**
+
+  4. Run `/pergamino-intake`. Answer the 8-question interview.
   5. The kit creates `~/Main{{SLUG}}Brain/` and `~/LLM{{SLUG}}Brain/`.
   6. Run `/interview-executive --person {{name}}` for any leader you
      want captured. Their answers populate the brain.
