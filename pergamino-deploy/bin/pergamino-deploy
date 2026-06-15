@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+// pergamino-deploy — provision a client brain from an intake file, then verify
+// every piece is green. Verb/flag idiom mirrors Cloudflare's `cf`.
+//
+//   pergamino-deploy plan   --intake <file>            (dry-run: show the plan)
+//   pergamino-deploy apply  --intake <file> [--allow-server]
+//   pergamino-deploy verify --intake <file>            (re-run verifiers only)
+//
+// Flags: --intake <path> (required) · --allow-server · --json
+// Tokens come from env: GITHUB_TOKEN, CLOUDFLARE_API_TOKEN,
+// CLOUDFLARE_ACCOUNT_ID, STRIPE_SECRET_KEY.
+
+import { loadIntake, runPlan, printReport, log } from '../lib/core.mjs';
+import steps from '../steps/index.mjs';
+
+function parseArgs(argv) {
+  const verb = argv[0];
+  const opts = { json: false, allowServer: false };
+  for (let i = 1; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--intake') opts.intake = argv[++i];
+    else if (a === '--allow-server') opts.allowServer = true;
+    else if (a === '--json') opts.json = true;
+    else if (a === '-h' || a === '--help') opts.help = true;
+  }
+  return { verb, opts };
+}
+
+const HELP = `pergamino-deploy <plan|apply|verify> --intake <file> [--allow-server] [--json]
+
+  plan    dry-run — print what each step would do, run the verifiers
+  apply   execute the server-agnostic steps (add --allow-server for the rest)
+  verify  re-run verifiers only and print the install report
+`;
+
+async function main() {
+  const { verb, opts } = parseArgs(process.argv.slice(2));
+  if (opts.help || !verb || !['plan', 'apply', 'verify'].includes(verb)) {
+    console.log(HELP);
+    process.exit(verb ? 1 : 0);
+  }
+  if (!opts.intake) { log.err('missing --intake <file>'); process.exit(1); }
+
+  let intake;
+  try { intake = loadIntake(opts.intake); }
+  catch (e) { log.err(e.message); process.exit(1); }
+
+  const ctx = {
+    intake,
+    env: process.env,
+    apply: verb === 'apply',
+    allowServer: opts.allowServer,
+    log,
+  };
+
+  console.log(`\n${verb.toUpperCase()}  client=${intake.client.slug}  steps=${steps.length}` +
+    (ctx.apply ? '' : '  (dry-run)') + (opts.allowServer ? '  +server' : '  (server steps deferred)'));
+
+  const report = await runPlan(steps, ctx, { verifyOnly: verb === 'verify' });
+  const green = printReport(report, { json: opts.json });
+  process.exit(green ? 0 : 2);
+}
+
+main().catch((e) => { log.err(e.stack || e.message); process.exit(1); });
