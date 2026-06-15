@@ -42,9 +42,12 @@ your LLM. Override the LLM with `PERGAMINO_LLM=aider | gemini | none`.
 
 Full client deployment with the heartbeat Worker, GitHub teams,
 Cloudflare Access. See `heartbeat-worker/README.md` and the
-deployment playbook for the provisioning flow. (The CLI
-`pergamino-deploy` automates this; until built, follow the manual
-steps in `heartbeat-worker/README.md`.)
+deployment playbook for the provisioning flow. The CLI
+`pergamino-deploy` automates this — see [`pergamino-deploy/`](./pergamino-deploy/).
+It reads the `/pergamino-intake` output and provisions repos, access, sync,
+and billing, then verifies every piece is green. (Server-agnostic steps are
+live; the CouchDB/Tailscale host wiring lands once the managed-server choice
+is made.)
 
 ## What's in the kit
 

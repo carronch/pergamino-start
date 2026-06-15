@@ -1,0 +1,48 @@
+# pergamino-deploy intake — the contract /pergamino-intake must produce.
+# Supported YAML subset: comments, `key: value`, one level of nested maps by
+# indentation, and `- ` lists (of scalars or one-level maps). Quote values
+# that contain ':' or '#'. JSON intake is also accepted.
+
+client:
+  slug: interbus            # short kebab id; drives repo names, brain paths, tailnet
+  name: "Interbus"          # display name
+  locale: es-CR
+  seats: 8                  # ≤10 for the flat tier
+
+# Folder-level access = repo-level boundaries (one repo per role).
+roles:
+  - ceo
+  - operations
+  - finance
+  - sales
+
+repos:
+  org: carronch             # GitHub org/owner that holds the role repos
+  visibility: private
+  seed_from: agents-md-library   # templates/<seed_from> populates each repo's AGENTS.md
+
+cloudflare:
+  account_id_env: CLOUDFLARE_ACCOUNT_ID   # value read from env, not stored here
+  access_domain: interbus.pergamino.ai    # the reading layer (Quartz) hostname
+  # one Access application per role path
+  paths:
+    - /ceo
+    - /ops
+    - /finance
+    - /sales
+
+billing:
+  provider: stripe
+  plan: pergamino-flat-monthly   # the flat $1k/mo product (price id resolved at apply)
+  pilot_one_time: true           # also create the one-time pilot invoice
+  portal: true                   # generate a customer-portal link
+
+# Server-dependent — left abstract until the host is decided (fly.io vs VPS).
+sync:
+  enabled: true
+  couchdb:
+    host: TBD                # 'fly' | 'vps:<ip>' once decided
+    db_per_role: true
+  tailscale:
+    tailnet: interbus        # tailnet-per-client (locked decision)
+    enroll_devices: true
