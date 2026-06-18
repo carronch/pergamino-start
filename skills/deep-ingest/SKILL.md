@@ -12,6 +12,16 @@ This skill **composes** the `ingest` skill. It does not duplicate ingest's logic
 
 ## Steps
 
+### 0. Read the author's intent
+
+Before fetching anything, look at the clipping's frontmatter for an `intent:` field. The Obsidian Web Clipper prompts the author for this at clip time — it's a one-line "why I'm saving this and what I want done with it."
+
+- **If `intent:` is present and non-empty:** treat it as the steering instruction for the entire pass. Echo it back verbatim in Step 2's brief, and use it to bias Step 3 (theme assignment), Step 4 (which adjacent sources to pull), and Step 6 (which Main{{SLUG}}Brain entities to check against). When the intent names a domain — projects, beliefs, business arms — search Main{{SLUG}}Brain for those by name, not generically.
+- **If `intent:` is missing or empty:** proceed neutrally. Do not invent an intent.
+- **Record it.** The summary page must include an `## Intent at capture` block quoting the intent verbatim, so the reason survives next to the takeaways. If absent, omit the block — don't write "none."
+
+The intent is the author's framing, not the source's. A logistics article with `intent: "fit for Mawamba?"` becomes a Mawamba-fit memo, not a logistics recap.
+
 ### 1. Fetch the source
 
 If you have a web fetch tool, use it. Quick sanity check: if the response is mostly `<script>` tags or a "Loading…" placeholder (under ~500 chars of body content), stop and tell the author the page is JS-rendered. Don't produce a garbled summary from a JS shell.
@@ -54,9 +64,9 @@ If the theme already has 10+ sources consumed, **skip this step** — the theme 
 Update the theme page (per the schema in `CLAUDE.md`):
 
 - `## Current thesis` — if the theme already had one, **propose** an update in chat. Don't overwrite.
-- `## Open questions` — append 1–3 new questions surfaced by the new sources.
+- `## Open questions` — append 1–3 new questions surfaced by the new sources. If the author's intent (Step 0) asked a specific question, include it here verbatim.
 - `## Key claims` — each with `[Source: [[summaries/<slug>]]]`.
-- `## Sources consumed` — one line per ingested source, with takeaway.
+- `## Sources consumed` — one line per ingested source, with takeaway. When the row corresponds to the originating clipping, append `(intent: "<verbatim>")` so the reason survives at the theme level.
 - Append a timeline entry: `- **YYYY-MM-DD** | deep-ingest | <source title>. [Source: raw/web/<slug>]`
 
 ### 6. Main{{SLUG}}Brain theme-level check
@@ -92,6 +102,7 @@ In chat, under 10 lines:
 - **Never auto-create a theme.** Always confirm.
 - **Never write to Main{{SLUG}}Brain.** Stage proposals in the tray.
 - **Never skip the JS-shell check** — a silently garbled summary is worse than no summary.
+- **Intent steers, doesn't fabricate.** If `intent:` is empty, proceed neutrally. Never invent an intent the author didn't write.
 
 ## What this skill does NOT do
 

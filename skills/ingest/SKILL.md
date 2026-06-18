@@ -11,6 +11,16 @@ Run this when the author hands you a file in `~/LLM{{SLUG}}Brain/raw/` or asks y
 
 ## Steps
 
+### 0. Read the author's intent
+
+Before reading the source, check the file's frontmatter for an `intent:` field. The Obsidian Web Clipper prompts for this at clip time — a one-line "why I'm saving this and what I want done with it."
+
+- **If `intent:` is present:** treat it as the steering instruction for this ingest. Echo it back in Step 2's brief, let it bias which existing pages you expect to update (Step 2), which entities you extract (Step 5), and how the Main{{SLUG}}Brain check (Step 7) is scoped. When the intent names a domain — a project, a belief, a business arm — search Main{{SLUG}}Brain for those by name.
+- **If absent or empty:** proceed neutrally; do not invent one.
+- **Record it.** The summary page (Step 4) must include an `## Intent at capture` block quoting the intent verbatim. If absent, omit the block — don't write "none."
+
+The intent is the author's framing, not the source's. Frame the summary through that lens.
+
 ### 1. Read the source in full
 
 Don't skim. You're the one compiling it. If it's a URL, fetch the full page (not just a snippet). If it's a PDF, read all pages.
@@ -106,6 +116,7 @@ Then report to the author in chat. Under 10 lines:
 - **Never write to Main{{SLUG}}Brain** — stage proposals in the tray.
 - **Citations on every factual claim.**
 - **Default to no auto-ingest.** A file landing in `raw/` does not get processed until the author says so.
+- **Intent steers, doesn't fabricate.** If `intent:` is empty, proceed neutrally. Never invent an intent the author didn't write.
 
 ## What this skill does not do
 
