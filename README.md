@@ -49,6 +49,19 @@ and billing, then verifies every piece is green. (Server-agnostic steps are
 live; the CouchDB/Tailscale host wiring lands once the managed-server choice
 is made.)
 
+## The full build-spec prompts
+
+Besides the kit itself, this repo carries the **complete paste-and-go build
+specs** — a single document you paste as the first message to Claude Code
+on a fresh machine, and it interviews the human and builds the entire
+two-vault system phase by phase (no kit clone needed):
+
+- [`brain-setup-prompt-en.md`](./brain-setup-prompt-en.md) — English
+- [`brain-setup-prompt-es.md`](./brain-setup-prompt-es.md) — Español (voseo)
+- [`brain-setup-prompt-team-newsroom-es.md`](./brain-setup-prompt-team-newsroom-es.md) —
+  Team Edition for a shared newsroom brain (single vault, git-driven sync,
+  `fuentes-confidenciales/` hard block; first used for the Delfino.cr pilot)
+
 ## What's in the kit
 
 - **11 skills** under `skills/`:
