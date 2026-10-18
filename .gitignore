@@ -30,5 +30,7 @@ pergamino.local.env.bak-*
 .pergamino.env.*
 AGENTS.local.md
 .claude/settings.local.json
+.claude/settings.local.json.bak-*
+.claude/.settings.local.*
 reviewer-guard.local.txt
 __pycache__/

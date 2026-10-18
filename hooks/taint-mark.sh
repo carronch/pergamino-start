@@ -39,16 +39,16 @@ esac
 # the narrower one (it only fires on untrusted surfaces), so a match here is a
 # strictly stronger signal than a scan-injection warning.
 hit=""
-if echo "$result" | grep -qiE '(ignore[[:space:]]+((all|previous|prior|above)[[:space:]]+)+instructions|disregard[[:space:]]+((all|previous|prior)[[:space:]]+)+(instructions|prompts)|forget[[:space:]]+(everything|all[[:space:]]+previous))'; then
+if grep -qiE '(ignore[[:space:]]+((all|previous|prior|above)[[:space:]]+)+instructions|disregard[[:space:]]+((all|previous|prior)[[:space:]]+)+(instructions|prompts)|forget[[:space:]]+(everything|all[[:space:]]+previous))' <<<"$result"; then
   hit="instruction-override"
-elif echo "$result" | grep -qiE '<\|system\|>|\[INST\]|<\|im_start\|>system'; then
+elif grep -qiE '<\|system\|>|\[INST\]|<\|im_start\|>system' <<<"$result"; then
   hit="fake-system-delimiter"
-elif echo "$result" | grep -qiE '(this[[:space:]]+is[[:space:]]+(your|a)[[:space:]]+(system|admin|developer)[[:space:]]+message|anthropic[[:space:]]+(staff|engineer|admin).*instructs|new[[:space:]]+instructions[[:space:]]+from)'; then
+elif grep -qiE '(this[[:space:]]+is[[:space:]]+(your|a)[[:space:]]+(system|admin|developer)[[:space:]]+message|anthropic[[:space:]]+(staff|engineer|admin).*instructs|new[[:space:]]+instructions[[:space:]]+from)' <<<"$result"; then
   hit="context-manipulation"
-elif echo "$result" | grep -qiE '<!--[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' \
-   || echo "$result" | grep -qiE '/\*[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)'; then
+elif grep -qiE '<!--[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' <<<"$result" \
+   || grep -qiE '/\*[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' <<<"$result"; then
   hit="smuggled-instructions"
-elif echo "$result" | grep -qiE '(reveal[[:space:]]+your[[:space:]]+(system[[:space:]]+)?prompt|print[[:space:]]+your[[:space:]]+(initial[[:space:]]+)?instructions)'; then
+elif grep -qiE '(reveal[[:space:]]+your[[:space:]]+(system[[:space:]]+)?prompt|print[[:space:]]+your[[:space:]]+(initial[[:space:]]+)?instructions)' <<<"$result"; then
   hit="prompt-extraction"
 fi
 [[ -z "$hit" ]] && exit 0

@@ -8,13 +8,13 @@ set -euo pipefail
 cmd=$(jq -r '.tool_input.command // ""')
 
 # Patterns indicating nameserver or DNS-record manipulation
-if echo "$cmd" | grep -qE '\b(nameserver|ns1\.|ns2\.|set-nameservers|update-nameservers)\b' \
-   || echo "$cmd" | grep -qE 'cloudflare.*(dns|zone|nameserver)' \
-   || echo "$cmd" | grep -qE 'wrangler[[:space:]]+(dns|publish.*--routes)' \
-   || echo "$cmd" | grep -qE 'gandi[[:space:]]+(livedns|dns)' \
-   || echo "$cmd" | grep -qE 'aws[[:space:]]+route53[[:space:]]+(change-resource-record-sets|update-hosted-zone)' \
-   || echo "$cmd" | grep -qE '"type"[[:space:]]*:[[:space:]]*"(NS|MX|SPF|DKIM|DMARC)"' \
-   || echo "$cmd" | grep -qE 'curl.*api\.cloudflare\.com.*(zones|dns_records)'; then
+if grep -qE '\b(nameserver|ns1\.|ns2\.|set-nameservers|update-nameservers)\b' <<<"$cmd" \
+   || grep -qE 'cloudflare.*(dns|zone|nameserver)' <<<"$cmd" \
+   || grep -qE 'wrangler[[:space:]]+(dns|publish.*--routes)' <<<"$cmd" \
+   || grep -qE 'gandi[[:space:]]+(livedns|dns)' <<<"$cmd" \
+   || grep -qE 'aws[[:space:]]+route53[[:space:]]+(change-resource-record-sets|update-hosted-zone)' <<<"$cmd" \
+   || grep -qE '"type"[[:space:]]*:[[:space:]]*"(NS|MX|SPF|DKIM|DMARC)"' <<<"$cmd" \
+   || grep -qE 'curl.*api\.cloudflare\.com.*(zones|dns_records)' <<<"$cmd"; then
   jq -n '{
     hookSpecificOutput: {
       hookEventName: "PreToolUse",

@@ -21,8 +21,14 @@ for f in "$WB"/*.md; do
 done
 [ ${#names[@]} -gt 0 ] || exit 0
 
-# macOS stat first, then GNU stat.
-recent=$(cd "$WB" && { stat -f '%m%t%N' -- "${names[@]}" 2>/dev/null || stat --printf '%Y\t%n\n' -- "${names[@]}" 2>/dev/null; } \
+# GNU stat (Linux) or BSD stat (macOS). Pick one up front: GNU `stat -f` prints
+# file-system details before it fails, and those lines would show up as cards.
+if stat --version >/dev/null 2>&1; then
+  stat_mtime() { stat --printf '%Y\t%n\n' -- "$@"; }
+else
+  stat_mtime() { stat -f '%m%t%N' -- "$@"; }
+fi
+recent=$(cd "$WB" && stat_mtime "${names[@]}" 2>/dev/null \
   | sort -rn | head -5 | cut -f2- | sed 's/^/  - /')
 [ -n "$recent" ] || exit 0
 

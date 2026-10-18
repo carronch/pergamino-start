@@ -17,15 +17,15 @@ len=${#result}
 hits=()
 
 # 1. Instruction override
-if echo "$result" | grep -qiE '(ignore[[:space:]]+((all|previous|prior|above)[[:space:]]+)+instructions|disregard[[:space:]]+((all|previous|prior)[[:space:]]+)+(instructions|prompts)|forget[[:space:]]+(everything|all[[:space:]]+previous))'; then
+if grep -qiE '(ignore[[:space:]]+((all|previous|prior|above)[[:space:]]+)+instructions|disregard[[:space:]]+((all|previous|prior)[[:space:]]+)+(instructions|prompts)|forget[[:space:]]+(everything|all[[:space:]]+previous))' <<<"$result"; then
   hits+=("instruction-override")
 fi
-if echo "$result" | grep -qiE '<\|system\|>|\[INST\]|<\|im_start\|>system'; then
+if grep -qiE '<\|system\|>|\[INST\]|<\|im_start\|>system' <<<"$result"; then
   hits+=("fake-system-delimiter")
 fi
 
 # 2. Role-play / DAN
-if echo "$result" | grep -qiE '(pretend[[:space:]]+(you[[:space:]]+are|to[[:space:]]+be)|act[[:space:]]+as[[:space:]]+(if[[:space:]]+you|a[[:space:]]+different)|you[[:space:]]+are[[:space:]]+now[[:space:]]+DAN|jailbreak|bypass[[:space:]]+(all[[:space:]]+)?restrictions)'; then
+if grep -qiE '(pretend[[:space:]]+(you[[:space:]]+are|to[[:space:]]+be)|act[[:space:]]+as[[:space:]]+(if[[:space:]]+you|a[[:space:]]+different)|you[[:space:]]+are[[:space:]]+now[[:space:]]+DAN|jailbreak|bypass[[:space:]]+(all[[:space:]]+)?restrictions)' <<<"$result"; then
   hits+=("role-play-DAN")
 fi
 
@@ -34,21 +34,21 @@ if echo "$result" | LC_ALL=C grep -qP '[\xe2\x80\x8b-\xe2\x80\x8f]|[\xef\xbb\xbf
   hits+=("zero-width-unicode")
 fi
 # Long base64 blob (>200 chars consecutive)
-if echo "$result" | grep -qE '[A-Za-z0-9+/]{200,}={0,2}'; then
+if grep -qE '[A-Za-z0-9+/]{200,}={0,2}' <<<"$result"; then
   hits+=("long-base64-blob")
 fi
 
 # 4. Context manipulation
-if echo "$result" | grep -qiE '(this[[:space:]]+is[[:space:]]+(your|a)[[:space:]]+(system|admin|developer)[[:space:]]+message|anthropic[[:space:]]+(staff|engineer|admin).*instructs|new[[:space:]]+instructions[[:space:]]+from)'; then
+if grep -qiE '(this[[:space:]]+is[[:space:]]+(your|a)[[:space:]]+(system|admin|developer)[[:space:]]+message|anthropic[[:space:]]+(staff|engineer|admin).*instructs|new[[:space:]]+instructions[[:space:]]+from)' <<<"$result"; then
   hits+=("context-manipulation")
 fi
-if echo "$result" | grep -qiE '(reveal[[:space:]]+your[[:space:]]+(system[[:space:]]+)?prompt|print[[:space:]]+your[[:space:]]+(initial[[:space:]]+)?instructions|what[[:space:]]+are[[:space:]]+your[[:space:]]+rules)'; then
+if grep -qiE '(reveal[[:space:]]+your[[:space:]]+(system[[:space:]]+)?prompt|print[[:space:]]+your[[:space:]]+(initial[[:space:]]+)?instructions|what[[:space:]]+are[[:space:]]+your[[:space:]]+rules)' <<<"$result"; then
   hits+=("prompt-extraction")
 fi
 
 # 5. Instruction smuggling (HTML/code-comment hidden directives)
-if echo "$result" | grep -qiE '<!--[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' \
-   || echo "$result" | grep -qiE '/\*[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)'; then
+if grep -qiE '<!--[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' <<<"$result" \
+   || grep -qiE '/\*[[:space:]]*(ignore|system|instruction|prompt|claude|anthropic)' <<<"$result"; then
   hits+=("smuggled-instructions")
 fi
 
