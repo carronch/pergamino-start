@@ -24,7 +24,7 @@ cat > "$T/bin/qmd" <<'FAKE'
 #!/bin/bash
 case "$1 $2" in
   "collection list") printf 'main (qmd://main/)\n  Path: x\nllm (qmd://llm/)\n' ;;
-  "collection show") if [ "$3" = main ]; then echo "  Path:     /old/main"; else echo "  Path:     $QMD_LLM_PATH"; fi ;;
+  "collection show") if [ "$3" = main ]; then echo "  Path:     ${QMD_MAIN_PATH:-/old/main}"; else echo "  Path:     $QMD_LLM_PATH"; fi ;;
   "collection add") exit 0 ;;
   *) exit 1 ;;
 esac
@@ -37,7 +37,7 @@ for f in /usr/bin/* /bin/*; do
   [ -e "$T/nopy/$n" ] || ln -s "$f" "$T/nopy/$n"
 done
 
-inst() { (cd "$T/elsewhere" && env -i HOME="$T/home" PATH="$1" QMD_LLM_PATH="${QMD_LLM_PATH:-}" bash "$T/kit/install.sh" "${@:2}" 2>&1); }
+inst() { (cd "$T/elsewhere" && env -i HOME="$T/home" PATH="$1" QMD_LLM_PATH="${QMD_LLM_PATH:-}" QMD_MAIN_PATH="${QMD_MAIN_PATH:-}" bash "$T/kit/install.sh" "${@:2}" 2>&1); }
 dirty() { git -C "$T/kit" status --porcelain; }
 envval() { sed -n "s/^$1=//p" "$T/kit/pergamino.local.env"; }
 
@@ -74,6 +74,13 @@ ls "$T/kit/.claude/" | grep -q 'settings.local.json.bak-' && ls -a "$T/kit" | gr
 check "moving a brain backs up the local settings and paths file" $?
 [[ -z "$(dirty)" ]]; check "the backups are ignored by git" $?
 [[ "$(envval PERGAMINO_MAIN_BRAIN)" == "$T/home/NewMain" ]]; check "the paths file holds the new Main brain" $?
+
+# 8. "." and ".." are resolved before saving, and an equal qmd path gets no move advice.
+inst "$T/bin:/usr/bin:/bin" --yes --main "../home/./x/../DotMain" --llm "$T/home/NewLLM" >/dev/null
+[[ "$(envval PERGAMINO_MAIN_BRAIN)" == "$T/home/DotMain" ]]; check "a path with . and .. is saved resolved" $?
+out=$(QMD_MAIN_PATH="$T/home/DotMain" QMD_LLM_PATH="$T/home/NewLLM" inst "$T/bin:/usr/bin:/bin" --yes)
+[[ "$out" == *"qmd collection 'main' already exists"* && "$out" != *"points at"* ]]
+check "qmd: the same folder written another way gets no move advice" $?
 
 # 7. The paths file holds only lines block-sensitive.sh allows: PERGAMINO_<NAME>=<path> or a comment without "=".
 ! grep -vE '^PERGAMINO_[A-Z_]+=.+$|^#[^=]*$|^$' "$T/kit/pergamino.local.env" >/dev/null
