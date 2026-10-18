@@ -95,7 +95,8 @@ cat > "$G/stat" <<'FAKE'
 case "$1" in
   --version) echo "stat (GNU coreutils) 9.4" ;;
   -f) echo '  File: "x"'; echo '    ID: 0 Namelen: 255 Type: ext2/ext3'; echo 'Block size: 4096'; exit 1 ;;
-  --printf) shift 2; [ "$1" = "--" ] && shift; for f in "$@"; do /usr/bin/stat -f '%m%t%N' -- "$f"; done ;;
+  --printf) shift 2; [ "$1" = "--" ] && shift
+    exec python3 -I -c 'import os,sys; [print("%d\t%s" % (os.stat(f).st_mtime, f)) for f in sys.argv[1:]]' "$@" ;;
   *) exit 1 ;;
 esac
 FAKE

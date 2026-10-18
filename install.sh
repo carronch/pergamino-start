@@ -58,11 +58,23 @@ read_env() {
   sed -n "s/^$1=//p" "$ENV_FILE" | tail -1 | sed -e 's/^"//' -e 's/"$//' -e "s|^~|$HOME|"
 }
 # Expand ~ and make the path absolute: hooks resolve paths from the kit folder, not from here.
+# Then drop "." and resolve "..", so the saved path matches what qmd records.
 expand() {
-  local p="${1/#\~/$HOME}"
+  local p="${1/#\~/$HOME}" seg IFS=/
+  local -a parts out=()
   case "$p" in /*) ;; *) p="$PWD/$p" ;; esac
-  printf '%s' "${p%/}"
+  read -r -a parts <<<"$p"
+  for seg in "${parts[@]}"; do
+    case "$seg" in
+      ''|.) ;;
+      ..) [ ${#out[@]} -gt 0 ] && { unset 'out[${#out[@]}-1]'; out=("${out[@]}"); } ;;
+      *) out+=("$seg") ;;
+    esac
+  done
+  [ ${#out[@]} -gt 0 ] && printf '/%s' "${out[@]}" || printf '/'
 }
+# The physical path of an existing folder (symbolic links resolved); empty when it does not exist.
+phys() { (cd "$1" 2>/dev/null && pwd -P); }
 
 # An older kit used ~/Main<Name>Brain and ~/LLM<Name>Brain. Offer one if it is there.
 guess() {
@@ -177,7 +189,7 @@ if command -v qmd >/dev/null 2>&1; then
     name="${pair%%:*}"; path="${pair#*:}"
     if printf '%s\n' "$have" | grep -q "^$name "; then
       registered="$(qmd collection show "$name" 2>/dev/null | sed -n 's/^ *Path: *//p' | head -1)"
-      if [ -z "$registered" ] || [ "${registered%/}" = "${path%/}" ]; then
+      if [ -z "$registered" ] || [ "$(phys "$registered")" = "$(phys "$path")" ]; then
         ok "qmd collection '$name' already exists"
       else
         warn "qmd collection '$name' points at $registered, not $path. To move it:"

@@ -30,7 +30,7 @@ if grep -qiE '(pretend[[:space:]]+(you[[:space:]]+are|to[[:space:]]+be)|act[[:sp
 fi
 
 # 3. Encoding / obfuscation (zero-width unicode and homoglyphs are the high-signal ones)
-if echo "$result" | LC_ALL=C grep -qP '[\xe2\x80\x8b-\xe2\x80\x8f]|[\xef\xbb\xbf]' 2>/dev/null; then
+if LC_ALL=C grep -qP '[\xe2\x80\x8b-\xe2\x80\x8f]|[\xef\xbb\xbf]' <<<"$result" 2>/dev/null; then
   hits+=("zero-width-unicode")
 fi
 # Long base64 blob (>200 chars consecutive)
