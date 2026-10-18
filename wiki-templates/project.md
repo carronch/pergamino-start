@@ -1,7 +1,7 @@
 ---
 kind: project
 title: "{{title}}"
-business: ""                 # slug of parent business, e.g. "{{ENTITY_EXAMPLE_1}}"
+business: ""                 # slug of parent business, e.g. "my-studio"
 status: active | paused | shipped | abandoned
 started: {{date}}
 created: {{date}}
@@ -66,6 +66,7 @@ project. Removed when resolved (move to Timeline with a resolution note).
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Append-only. Build log in reverse-chronological order. Every meaningful
 session, decision, ship, or pivot goes here._

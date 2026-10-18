@@ -4,6 +4,8 @@ title: "{{title}}"
 aliases: []
 lived: ""                    # e.g. "1924–present" or "1918–1988"
 known_for: []
+domains: []                  # what they are best for on the board, e.g. [decisions, positioning]
+grounded: false              # true only when the frames below cite ingested sources (convene-the-board)
 tags: []
 created: {{date}}
 updated: {{date}}
@@ -66,6 +68,7 @@ for *you*.
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _How your engagement with this thinker has evolved._
 

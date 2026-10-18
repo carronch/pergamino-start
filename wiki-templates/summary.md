@@ -53,10 +53,10 @@ active projects.
 ## Tension with truth
 
 _(Only include this section if the source contradicts something in
-the MainBrain. Flag the tension; never modify the MainBrain.)_
+the Main brain. Flag the tension; never modify the Main brain.)_
 
-This source claims X. Main{{SLUG}}Brain `beliefs/<file>.md#topic` holds Y. Not
-updating the MainBrain. Flagging for your review.
+This source claims X. The Main brain `beliefs/<file>.md#topic` holds Y. Not
+updating the Main brain. Flagging for your review.
 
 ## Open threads
 
@@ -64,6 +64,7 @@ Questions this source raised. Things to investigate. Feed autoresearch.
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Usually not needed for summaries (the source is immutable). Use if the
 source gets revisited, re-read, or updated._

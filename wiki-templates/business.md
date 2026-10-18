@@ -86,7 +86,7 @@ obligations, standing agreements.
 
 Names only, with a note that real context lives in truth:
 
-- Partner/employee/vendor name — role. _See Main{{SLUG}}Brain `people/` for
+- Partner/employee/vendor name — role. _See the Main brain `people/` for
   actual read._
 
 ## Open threads
@@ -95,6 +95,7 @@ Operational items pending. Removed when resolved (move to Timeline).
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Milestones, pivots, major operational events. Append-only._
 

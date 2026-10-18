@@ -4,8 +4,8 @@
 # that contain ':' or '#'. JSON intake is also accepted.
 
 client:
-  slug: interbus            # short kebab id; drives repo names, brain paths, tailnet
-  name: "Interbus"          # display name
+  slug: acme-tours          # short kebab id; drives repo names, brain paths, tailnet
+  name: "Acme Tours"        # display name
   locale: es-CR
   seats: 8                  # ≤10 for the flat tier
 
@@ -17,13 +17,13 @@ roles:
   - sales
 
 repos:
-  org: carronch             # GitHub org/owner that holds the role repos
+  org: your-github-org      # GitHub org/owner that holds the role repos
   visibility: private
   seed_from: agents-md-library   # templates/<seed_from> populates each repo's AGENTS.md
 
 cloudflare:
   account_id_env: CLOUDFLARE_ACCOUNT_ID   # value read from env, not stored here
-  access_domain: interbus.pergamino.ai    # the reading layer (Quartz) hostname
+  access_domain: acme-tours.example.com    # the reading layer (Quartz) hostname
   # one Access application per role path
   paths:
     - /ceo
@@ -44,5 +44,5 @@ sync:
     host: TBD                # 'fly' | 'vps:<ip>' once decided
     db_per_role: true
   tailscale:
-    tailnet: interbus        # tailnet-per-client (locked decision)
+    tailnet: acme-tours      # tailnet-per-client (locked decision)
     enroll_devices: true

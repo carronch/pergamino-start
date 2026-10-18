@@ -1,44 +1,52 @@
-# RESOLVER — Where Does This Go?
+# RESOLVER — Where does this go?
 
-**Read this before creating any new page in `wiki/`.**
+**Read this before you create any new page in the LLM brain.**
 
-Every piece of knowledge has exactly one home. Walk top to bottom; the first match wins. MECE: one subject → one page → one directory. Cross-references preserve adjacency.
+Every piece of knowledge has exactly one home. Walk the rules from top to bottom; the first match wins. One subject → one page → one directory, with no overlaps and no gaps. Cross-references keep related pages connected.
 
-This vault supports three kinds of work:
+The LLM brain supports three kinds of work:
 
-- **Operating** — things the author runs and ships (businesses, clients, projects, decisions, tools, vendors)
-- **Exploring** — business ideas not yet committed (ventures)
-- **Research** — what the author thinks about (themes, thinkers, concepts)
+- **Operating**: things the author runs and ships (businesses, clients, projects, decisions, tools, vendors)
+- **Exploring**: business ideas not yet committed (ventures)
+- **Research**: what the author thinks about (themes, thinkers, concepts)
 
 `businesses/` is the operating hub. `themes/` is the research hub.
 
-The kit's install script copies this file to `~/LLM{{SLUG}}Brain/RESOLVER.md` on first run — the vault-local copy is authoritative at runtime; the repo copy is the source of truth across projects.
+The install copies this file to `RESOLVER.md` in the LLM brain (`$PERGAMINO_LLM_BRAIN`). The copy in the brain is authoritative at runtime, and `setup-interview` customizes it. The kit's copy is the default for new brains.
 
 ---
 
 ## The tree
 
 ```
-LLM{{SLUG}}Brain/
+<LLM brain>/
 ├── RESOLVER.md                ← this file
-├── raw/                       ← unprocessed sources, processed: false
+├── lessons.md                 ← corrections that apply to every session
+├── inbox/                     ← captures waiting for deep-ingest (Shape A)
+├── Clippings/                 ← Obsidian Web Clipper files waiting for deep-ingest (Shape B)
+├── raw/                       ← immutable sources, processed: false until ingested
 │   ├── articles/
 │   ├── papers/
+│   ├── books/
 │   ├── transcripts/
 │   ├── podcast-episodes/
-│   ├── web/                   ← URL-fetched pages (provenance is the URL)
-│   ├── notes/                 ← text-only captures from inbox/ (no URL)
-│   └── assets/
-├── inbox/                     ← unclassified; /compile sorts it
+│   ├── correspondence/
+│   ├── code/                  ← a summary of a repository studied as an artifact
+│   ├── media/                 ← images, each with a .md description
+│   ├── web/                   ← URL-fetched pages (the provenance is the URL)
+│   ├── notes/                 ← text-only captures and snippets (no URL)
+│   └── autoresearch/          ← sources fetched by deep-ingest and autoresearch, by date
+├── reminders/                 ← dated reminders (frontmatter due: YYYY-MM-DD) for the author
 ├── wiki/
-│   ├── _index.md              ← master index, never edit manually
-│   ├── log.md                 ← append-only ingest log
+│   ├── _index.md              ← master index, rebuilt by a script, never hand-edited
+│   ├── _graph.json            ← link graph, rebuilt with the index
+│   ├── log.md                 ← append-only log of ingests, queries, lints and sweeps
 │   ├── todo.md                ← lint findings
 │   │
-│   ├── businesses/            ← the author's operating entities (e.g. {{ENTITY_EXAMPLE_1}}, {{ENTITY_EXAMPLE_2}})
+│   ├── businesses/            ← the author's operating entities
 │   ├── clients/               ← customers served through one of the businesses
-│   ├── projects/              ← specific work inside a business
-│   ├── decisions/             ← technical + business ADRs
+│   ├── projects/              ← specific work inside a business or for a client
+│   ├── decisions/             ← technical and business decision records
 │   ├── tools/                 ← external software, platforms, APIs, protocols
 │   ├── vendors/               ← services the author pays for or depends on
 │   │
@@ -48,18 +56,17 @@ LLM{{SLUG}}Brain/
 │   ├── thinkers/              ← intellectual influences (engaged through their work)
 │   ├── concepts/              ← frameworks, patterns, mental models
 │   │
+│   ├── meetings/              ← one note per meeting (ingest-meeting)
+│   ├── workblocks/            ← work cards: one card per project or plan (the kanban)
 │   ├── summaries/             ← one summary per ingested source
-│   └── syntheses/             ← cross-source analysis, dashboards, kept Q&A
+│   └── syntheses/             ← cross-source analysis, board memos, sweep reports, kept answers
 │
-├── personal/                  ← personal domains (not studio work)
-├── plans/                     ← session plans (from /plan); project repos symlink docs/plans here
-├── solutions/                 ← solution write-ups; project repos symlink docs/solutions here
-└── outputs/                   ← Q&A, slides, reports — promoted: false until the author says so
+├── personal/                  ← the author's personal domains, portfolio list, access notes
+└── outputs/                   ← generated on demand: reports, decks, handoff texts
+    └── mainvault-pending/     ← the tray: proposals back to the Main brain
 ```
 
-`plans/` and `solutions/` are agent-owned work artifacts shared across project repos. Each project's `docs/plans/` and `docs/solutions/` is a symlink into these directories (created by the install script). Plans and solutions are not knowledge artifacts — they don't get filed by `/compile` or indexed in `wiki/_index.md`.
-
-Truth zone — **the author's authoritative principles, beliefs, life-level decisions, and private reads on people in their life** — lives in `~/Main{{SLUG}}Brain/`, not here. Agents are read-only on the MainBrain. Never create or edit belief/principle/life-decision pages in the LLMBrain.
+The truth zone (**the author's authoritative principles, beliefs, life-level decisions, heartbeats and private reads on people**) lives in the Main brain (`$PERGAMINO_MAIN_BRAIN`), not here. Agents are read-only on the Main brain; only `soul-audit`, invoked by name, writes there. Never create or edit belief, principle or life-decision pages in the LLM brain.
 
 ---
 
@@ -69,87 +76,113 @@ Start: **what is the primary subject of this page?**
 
 ### Raw source first
 
-0. **An article, paper, tweet, transcript, PDF, image you want processed** → `raw/<kind>/<slug>` with `processed: false`. `/compile` routes it to `wiki/summaries/<slug>.md` and extracts concepts. **URL-fetched pages** (where provenance is the URL itself, not a paper or podcast) → `raw/web/<YYYY-MM-DD>-<slug>.md`; the `deep-ingest` skill handles fetch + save. **Text-only captures** from `inbox/` (a `type: capture` file with `urls: []`) → `raw/notes/<YYYY-MM-DD>-<slug>.md`; `deep-ingest` files them and skips the research pass since there's nothing external to fetch.
+0. **An article, paper, post, transcript, PDF or image to process** → `raw/<kind>/<slug>` with `processed: false`. `ingest` routes it to `wiki/summaries/<slug>.md` and extracts entities. A file in `raw/` does not ingest itself: the author, or a calling skill, starts the ingest.
+   - **A URL** (the provenance is the URL itself) → `raw/web/<YYYY-MM-DD>-<slug>.md`. `deep-ingest` fetches and saves it. A URL that points at a PDF → `raw/papers/` with `source_type: paper`.
+   - **A local file** → by extension and content:
+
+     | Extension or shape | Goes to | `source_type` |
+     |---|---|---|
+     | `.pdf` (academic, journal article) | `raw/papers/<slug>.pdf` | paper |
+     | `.pdf` (book) | `raw/books/<slug>.pdf` | book |
+     | Markdown article (clean text body) | `raw/articles/<slug>.md` | article |
+     | Email export | `raw/correspondence/<YYYY-MM-DD>-<slug>.md` | correspondence |
+     | Voice memo or audio transcript | `raw/transcripts/<YYYY-MM-DD>-<slug>.md` | transcript |
+     | Code repository (studied as an artifact) | `raw/code/<slug>.md` (a *summary* of the repository, not the code) | code |
+     | Image (diagram, photo) | `raw/media/<slug>.<ext>` and a `.md` description next to it | media |
+     | Anything you cannot classify | Ask the author. Do not guess into a wrong folder. | |
+
+   - **A text snippet or a text-only capture** (an `inbox/` file with `urls: []`) → `raw/notes/<YYYY-MM-DD>-<slug>.md` with `source_type: note`. `deep-ingest` files it and skips the research pass.
+   - **An instruction to the agent** ("remind me to…", "make a note that…") → not a source. Act on it: a dated reminder in `reminders/`, or an item on the right card in `wiki/workblocks/`.
+   - **A meeting transcript** → `ingest-meeting`. It writes `wiki/meetings/` (rule 12) and links the transcript where it already lives.
 
 ### Operating
 
-1. **One of the operating entities** — has legal entity or is incorporating, has accounting, has operations → `wiki/businesses/<slug>.md`
+1. **One of the author's operating entities**: it has a legal entity or is incorporating, it has accounting, it has operations → `wiki/businesses/<slug>.md`
 
-2. **A customer served through one of the businesses** (pays the author, the author delivers work) → `wiki/clients/<slug>.md`
+2. **A customer served through one of the businesses** (pays the author, receives work) → `wiki/clients/<slug>.md`
 
-3. **Something being actively built inside a business or client** — campaign, feature, property improvement, funnel → `wiki/projects/<slug>.md` with `business:` or `client:` frontmatter pointing to the parent
+3. **Something actively built inside a business or for a client**: a campaign, a feature, a property improvement, a funnel → `wiki/projects/<slug>.md`, with `business:` or `client:` frontmatter that points to the parent
 
-4. **A decision worth explaining or revisiting** → `wiki/decisions/<slug>.md` with `business:` or `client:` if it affects a specific one
+4. **A decision worth explaining or revisiting** → `wiki/decisions/<slug>.md`, with `business:` or `client:` if it affects a specific one
 
-5. **An external software tool, platform, library, API, service, or protocol** → `wiki/tools/<slug>.md`
+5. **An external software tool, platform, library, API, service or protocol** → `wiki/tools/<slug>.md`
 
 6. **A service the author pays for or depends on** → `wiki/vendors/<slug>.md`
 
+7. **The plan and the state of current work on a project** → its card in `wiki/workblocks/YYYY-MM-DD-<slug>.md`, from `templates/workblock.md`. One card per project or plan. New work inside a project goes on its existing card; do not open a second card.
+
 ### Exploring
 
-7. **A business idea not yet committed** → `wiki/ventures/<slug>.md`
+8. **A business idea not yet committed** → `wiki/ventures/<slug>.md`
 
 ### Research
 
-8. **A long-running research thread** — a topic deepening over weeks or months → `wiki/themes/<slug>.md` with `cluster: work | interest | teaching`
+9. **A long-running research thread**: a topic that deepens over weeks or months → `wiki/themes/<slug>.md` with `cluster: work | interest | teaching`
 
-9. **A person whose ideas the author tracks** — an intellectual influence, engaged through their work, not a contact → `wiki/thinkers/<slug>.md`
+10. **A person whose ideas the author tracks**: an intellectual influence, engaged through their work, not a contact → `wiki/thinkers/<slug>.md` (or `wiki/thinkers/<slug>/` with an index and `frames/`, when the thinker has many frames)
 
-10. **A reusable mental model, framework, pattern, or thesis** → `wiki/concepts/<slug>.md` — with `subkind: mental-model` for Munger-style frameworks (uses `wiki-templates/mental-model.md`)
+11. **A reusable mental model, framework, pattern or thesis** → `wiki/concepts/<slug>.md`, with `subkind: mental-model` for Munger-style frameworks (from `wiki-templates/mental-model.md`)
 
 ### Both
 
-11. **A record of one source** the author has ingested → `wiki/summaries/<slug>.md`
+12. **A meeting** → `wiki/meetings/<YYYY-MM-DD>-<slug>.md` (`ingest-meeting`)
 
-12. **A cross-source analysis or kept answer to a question the author asked** → `wiki/syntheses/<slug>.md` OR `outputs/YYYY-MM-DD-<slug>.md` if generated on demand
+13. **A record of one source** that the author ingested → `wiki/summaries/<slug>.md`
 
-13. **Personal, not studio work** — health, family, finances — → `personal/`. Agents read on request, never proactively surface.
+14. **A cross-source analysis, or a kept answer to a question the author asked** → `wiki/syntheses/<slug>.md`, OR `outputs/YYYY-MM-DD-<slug>.md` if it was generated on demand and is not knowledge (a report, a deck, a handoff text)
 
-14. **Nothing fits cleanly** → `inbox/YYYY-MM-DD-<slug>.md`. Flag in chat. `/compile` sorts it on next run.
+15. **A proposed change to the Main brain** → `outputs/mainvault-pending/YYYY-MM-DD-<slug>.md`, with `<!-- target: <path-in-main-brain> -->` as the first line. The author promotes it with `"$PERGAMINO_HOME/scripts/promote-to-mainvault.sh"` or by hand.
+
+16. **A correction that applies to every session** → `lessons.md` (from `templates/lessons.md`). A correction that belongs to one project → that project's card, under `## Lessons`.
+
+17. **Personal, not work**: health, family, finances → `personal/`. Agents read it on request, and never surface it on their own.
+
+18. **Nothing fits cleanly** → `inbox/YYYY-MM-DD-<slug>.md`. Flag it in chat. The next `deep-ingest` or `maintain` pass sorts it.
 
 ---
 
 ## Disambiguation rules
 
-- **Business vs. Client:** A business is one of the author's own entities. A client pays the author through one of those businesses. If both are true (a customer is using the services AND the author is invested), file as client; note the equity in the page.
+- **Business vs. client:** A business is one of the author's own entities. A client pays the author through one of those businesses. If both are true (a client that uses the author's services AND in which the author has invested), file it as a client, and note the equity on the page.
 
-- **Business vs. Venture:** A business has a legal entity (or is incorporating), accounting, operations. A venture is an idea not committed to. **Test: does it have accounting?** Yes → business. No → venture.
+- **Business vs. venture:** A business has a legal entity (or is incorporating), accounting and operations. A venture is an idea without a commitment. **Test: does it have accounting?** Yes → business. No → venture.
 
-- **Venture vs. Project:** A venture is a whole business-in-waiting. A project is a specific piece of work inside an existing business. A new product idea (as a concept) is a venture; "Build the MVP for that idea" as a dev task inside an operating entity would be a project.
+- **Venture vs. project:** A venture is a whole business in waiting. A project is a specific piece of work inside an existing business. A note-taking app (as an idea) is a venture; "build the note-taking app's first version" as a task inside an operating business would be a project.
 
-- **Project vs. Business:** A project lives *inside* a business. If the work would warrant its own entity, accounting, or independent operations, it's a venture (pre-commit) or business (committed) — not a project.
+- **Project vs. business:** A project lives *inside* a business. If the work would need its own entity, accounting or independent operations, it is a venture (before commitment) or a business (after) — not a project.
 
-- **Theme vs. Concept:** A theme is a topic area; a concept is one framework within it. "Mental models" is a theme. "Inversion" is a concept.
+- **Project page vs. card:** The project page in `wiki/projects/` holds the compiled truth about the project. The card in `wiki/workblocks/` holds the plan, the next actions and the dated timeline of the work. The card links to the page; it does not restate it.
 
-- **Theme vs. Venture:** Themes deepen understanding. Ventures evaluate whether to commit. Research on "prediction markets" is a theme. "Should I build a prediction market platform" is a venture.
+- **Theme vs. concept:** A theme is a topic area. A concept is one framework within it. "Munger's mental models" is a theme. "Inversion" is a concept.
 
-- **Theme vs. Project:** A project ships. A theme deepens. Research on AI agent infrastructure is a theme. A concrete bot the author is shipping is a project inside one of the businesses that draws from that theme.
+- **Theme vs. venture:** Themes deepen understanding. Ventures evaluate whether to commit. Research on "prediction markets" is a theme. "Should I build a prediction market platform?" is a venture.
 
-- **Thinker vs. Person-in-the-MainBrain:** Thinker pages are for intellectual influences engaged through their work. Business partners, family, contacts live in `~/Main{{SLUG}}Brain/` (the author's zone). Munger → thinker. A business partner → MainBrain, not a wiki page.
+- **Theme vs. project:** A project ships. A theme deepens. Research on AI agent infrastructure is a theme. A trading bot built inside one of the businesses is a project that draws from that theme.
 
-- **Mental model vs. regular concept:** Mental model uses Munger-style structure (when it applies / doesn't / counterexamples). Both live in `concepts/`; mental models use `subkind: mental-model`.
+- **Thinker vs. a person in the Main brain:** Thinker pages are for intellectual influences, engaged through their work. Business partners, family and contacts live in the Main brain's `people/` (the author's zone). Munger → thinker. A business partner → the Main brain, not a wiki page. Meeting attendees resolve to their organization's page.
 
-- **Decision vs. Truth:** `wiki/decisions/` holds technical and business ADRs. Life-level decisions ("quit finance", "move home") live in the MainBrain's truth zone.
+- **Mental model vs. regular concept:** A mental model uses the Munger-style structure (when it applies, when it does not, counterexamples). Both live in `concepts/`. Mental models use `subkind: mental-model`.
 
-- **Tool vs. Vendor:** A tool is a thing the author uses in their work (the software itself). A vendor is the relationship (who they pay, what the contract covers, what's at stake if they disappear). Cloudflare Workers = tool. Cloudflare (the company they have an account with) = vendor.
+- **Decision vs. truth:** `wiki/decisions/` holds technical and business decision records. Life-level decisions ("leave my job", "move countries") live in the Main brain's truth zone.
 
-- **Tool vs. Project:** A tool exists in the world (Cloudflare Workers). A project is the author's work. A protocol or library is a tool; a bot built on top of it is a project inside one of the businesses.
+- **Tool vs. vendor:** A tool is a thing the author uses in their work (the software itself). A vendor is the relationship (whom the author pays, what the contract covers, what is at stake if it disappears). Cloudflare Workers = tool. Cloudflare, the company that holds the author's account = vendor.
+
+- **Tool vs. project:** A tool exists in the world (Cloudflare Workers). A project is the author's work. A lending protocol is a tool; the author's bot that trades on it is a project inside one of the businesses.
 
 ---
 
 ## Page structure — every wiki page
 
-All `wiki/**` pages follow the compiled-truth-plus-timeline pattern.
+All `wiki/**` entity pages follow the compiled-truth-plus-timeline pattern. The templates in `wiki-templates/` set the fields for each kind.
 
 ```markdown
 ---
-type: business | client | project | decision | tool | vendor | venture | theme | thinker | concept | summary | synthesis
+kind: business | client | project | decision | tool | vendor | venture | theme | thinker | concept | summary | synthesis
 title: ""
 slug: ""
 aliases: []                  # all known variants
 tags: []
 sources: [raw/<kind>/<slug>]
-backlinks: []                # populated by /compile
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 confidence: high | medium | low
@@ -157,12 +190,12 @@ confidence: high | medium | low
 
 # {{ title }}
 
-<!-- Compiled truth: current best understanding. Rewritten when evidence changes. -->
+<!-- Compiled truth: the current best understanding. Rewrite it when the evidence changes. -->
 
-[One-paragraph summary — who/what/why they matter.]
+[One-paragraph summary: who or what it is, and why it matters.]
 
 ## State
-[Current state: active/inactive, relationship, open threads, key facts.]
+[Current state: active or inactive, relationship, open threads, key facts.]
 
 ## Links
 - Related project: [[wiki/projects/<slug>]]
@@ -170,71 +203,80 @@ confidence: high | medium | low
 
 <!-- timeline -->
 <!-- Append-only evidence log. Never rewrite or delete past entries. -->
-- 2026-04-20: [source:raw/articles/<slug>] First mention in conversation about X.
-- 2026-04-22: [source:meeting/2026-04-22-<slug>-kickoff] Confirmed role as CTO.
+- YYYY-MM-DD: [source:raw/articles/<slug>] First mention, in an article about X.
+- YYYY-MM-DD: [source:wiki/meetings/YYYY-MM-DD-<slug>] Role confirmed in the kickoff meeting.
 ```
 
 **Rules:**
-- Compiled truth above `<!-- timeline -->` is the current state. Rewrite when reality changes. No history kept.
-- Timeline below is append-only. Every entry has a date and a source reference.
-- Never mix the two. If you catch yourself editing a timeline entry, stop — write a new entry instead.
+- The compiled truth above `<!-- timeline -->` is the current state. Rewrite it when reality changes. It keeps no history.
+- The timeline below is append-only. Every entry has a date and a source reference.
+- Never mix the two. If you catch yourself editing a timeline entry, stop, and write a new entry instead.
+- Cite every factual claim: `[Source: raw/...]` or `[source:...]` in a timeline entry.
+- One home per fact. When a fact changes, update its home page first. Other pages and cards link to it; they do not copy it.
 
-Page templates for each `type` live in [`wiki-templates/`](../wiki-templates/).
+Work cards in `wiki/workblocks/` use the same split, with their own fields: see `templates/workblock.md`.
 
 ---
 
 ## Naming — slugs
 
-Lowercase, hyphens, no spaces, no accents. Max 60 chars.
+Lowercase, hyphens, no spaces, no accents. At most 60 characters. **Same input → same slug**, always.
 
-- **People (thinkers):** `first-last` (e.g. `charlie-munger`). Use `aliases: []` for variants.
-- **Businesses / clients / vendors / tools:** short handle.
-- **Projects:** one canonical slug per repo. All alternative names (repo-clone suffixes, language variants, old internal codenames) go in the page's `aliases: []` frontmatter — not as separate slugs.
+- **People (thinkers):** `first-last` (for example `charlie-munger`). Put variants in `aliases: []`.
+- **Businesses, clients, vendors, tools:** a short handle.
+- **Projects:** one canonical slug per repository. All other names (repository clone suffixes, names in another language, old internal code names) go in the page's `aliases: []` frontmatter, not in separate slugs.
 - **Concepts:** descriptive kebab-case.
+- **Dated pages** (meetings, cards, raw web pages, notes, outputs): `YYYY-MM-DD-<slug>`.
+- **From a URL:** derive the slug from the URL path. Strip `www.`, query strings and anchors first. `https://every.to/guides/compound-engineering` → `compound-engineering`.
+- **From a file:** the basename without the extension, lowercased, with spaces and underscores as hyphens.
 
-The **canonical slug list for the portfolio** lives in the local vault, not this template. The setup interview (`pergamino-intake`) populates `~/LLM{{SLUG}}Brain/personal/my-portfolio.md` during first-run configuration. Agents consult that file before inventing names.
+The **canonical slug list for the author's portfolio** lives in `personal/my-portfolio.md` in the LLM brain, not in this template. `skills/setup-interview/` writes it on the first run. Agents consult that file before they invent a name.
 
 ---
 
-## Backlinks — the Iron Law
+## Back-links — the iron law
 
-Every `[[wiki/path/slug]]` reference creates a backlink on the target. `/compile` maintains these. If you hand-edit a wiki page to reference another, you don't need to touch the target — `/compile` adds the backlink on next run.
+Every `[[wiki/path/slug]]` reference needs a link back from the target. `enrich` maintains back-links when it creates or updates a page. `lint` reports the gaps. If you hand-edit a page to reference another, add the back-link on the target's timeline in the same edit.
+
+Memory references are plain text (`` `memory: <slug>` ``), never `[[wikilinks]]`. `[[...]]` is only for paths inside the LLM brain.
 
 ---
 
 ## Never file here
 
-- `raw/` — read-only after ingest. `/compile` sets `processed: true` but doesn't rewrite.
-- Beliefs, principles, life-decisions, private people notes — **live in the MainBrain, not the LLMBrain.** Never create or edit here.
+- `raw/` is read-only after capture. `ingest` sets `processed: true` and changes nothing else.
+- `wiki/_index.md` and `wiki/_graph.json` are derived. Rebuild them with `bash "$PERGAMINO_HOME/scripts/rebuild-index.sh" "$PERGAMINO_LLM_BRAIN"`.
+- Beliefs, principles, life-decisions, heartbeats and private notes on people **live in the Main brain, not in the LLM brain.** Never create or edit them here.
+- `inbox/_processed/`, `inbox/_dead-letter/`, `Clippings/_processed/` and `Clippings/_dead-letter/` are the capture audit trail. Do not file new material there.
 
 ---
 
-## Cross-references don't duplicate
+## Cross-references do not duplicate
 
-One business page per entity. One venture page per idea. Projects and decisions link to their business via `business:` frontmatter. Themes link to businesses where relevant. Don't copy content between pages — link.
+One business page per entity. One venture page per idea. One card per project. Projects and decisions link to their business through `business:` frontmatter. Themes link to businesses where relevant. Do not copy content between pages: link.
 
 ---
 
 ## Promotion gate
 
-Nothing moves from `LLM{{SLUG}}Brain/outputs/` to the MainBrain automatically. The author reviews, and only the author sets `promoted: true`. The `caveats:` field tells them what the agent was uncertain about.
+Nothing moves from the LLM brain's `outputs/` to the Main brain automatically. The author reviews each proposal in the tray, and only the author promotes it (or sets `promoted: true`). The `caveats:` field tells the author what the agent was unsure about.
 
 ---
 
 ## When the agent walks this tree
 
-Before creating any page, state in chat:
+Before you create a page, state the destination in chat:
 
-> "New page for <title>. Walking the resolver: matches rule #<n>, because <reason>. Filing to `wiki/<dir>/<slug>.md`. Any objection?"
+> "New page for <title>. Walking the resolver: it matches rule #<n>, because <reason>. Filing to `wiki/<dir>/<slug>.md`."
 
-The author redirects before the write. After three clean walks in the same category, proceed silently on that category.
+Then write it. A new page is small and reversible, so the author can redirect afterwards. After three clean walks in the same category, proceed silently in that category. Before you claim that a page does not exist, search for it (`qmd search "<name>" -c llm`, and `-c main`), with its aliases.
 
 ---
 
 ## When to expand the tree
 
 Add a new top-level directory when:
-1. A category has more than 30 pages and should have its own resolver.
-2. The category has fundamentally different rules (e.g. `meetings/` has date-based slugs, not kebab-case).
+1. A category has more than 30 pages and needs its own resolver.
+2. The category has fundamentally different rules (for example `meetings/` has date-based slugs, not kebab-case).
 
-When that happens: add it here first, add a `README.md` to the new directory, then start filing. Never let the directory exist without a README explaining what belongs in it.
+When that happens: add it here first, add a `README.md` to the new directory, then start filing. Never let a directory exist without a README that explains what belongs in it.

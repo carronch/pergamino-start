@@ -1,15 +1,14 @@
 # pergamino-deploy
 
-The provisioner that turns *"instalado por Daniel"* from days into ~1 hour.
+The provisioner that turns an operator-led install from days into about one hour.
 One command reads an intake file and stands up a complete client brain —
 repos, access, sync, billing — then **verifies every piece is green** before
 declaring success.
 
 > Design canon: the agent does **not** improvise each install. The heart is a
 > **deterministic playbook** (these steps); the agent *orchestrates and verifies*
-> it. Daniel's own loop/goal discipline applied to ops: *"don't stop until
-> client N has their brain syncing, verified."* See the vault workblock
-> `2026-06-15-pergamino-product-tiers`.
+> it. The loop discipline applied to operations: don't stop until the
+> client's brain is syncing and verified.
 
 ## Status (2026-06-15) — Sprint 1 scaffold
 
