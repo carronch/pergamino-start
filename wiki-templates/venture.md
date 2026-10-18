@@ -78,6 +78,7 @@ compete with this:
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _How your thinking on this venture has evolved._
 

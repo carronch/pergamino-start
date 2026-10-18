@@ -53,6 +53,7 @@ What does this commit you to?
 
 ---
 
+<!-- timeline -->
 ## Log
 
 - **{{date}}** | Decision recorded.

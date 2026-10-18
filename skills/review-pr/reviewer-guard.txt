@@ -1,0 +1,61 @@
+# Read guard for the /review-pr reviewers (SKILL.md § Review, step 5).
+# scripts/reviewer-guard.sh turns this list into each reviewer's own sandbox rules: a Codex
+# permission profile and Claude Code's sandbox.filesystem.denyRead. The commands that a
+# reviewer runs cannot read these paths. The reviewer itself still signs in and reads its own
+# settings, because its sandbox applies to its commands only.
+#
+# One path per line. ~/ is the home folder of the machine that runs the review; any other path
+# starts with /. A * matches part of one name, also no characters at all (~/.claude.json*
+# covers ~/.claude.json and its backups). A * never matches a /, so ~/.cache/*-key does not
+# cover lib/get-key in the reviewer's copy under ~/.cache (both sandboxes). A rule covers the
+# folder that it names or matches, and the files in it. ? and [ are not allowed. A line that
+# starts with # is a comment. The script writes each path as the sandbox sees it, with links
+# resolved.
+#
+# The script adds three more rules by itself: the Main brain, the LLM brain and the kit folder
+# ($PERGAMINO_MAIN_BRAIN, $PERGAMINO_LLM_BRAIN, $PERGAMINO_HOME, from the environment or from
+# pergamino.local.env). Put a sensitive location of your own in
+# $PERGAMINO_HOME/reviewer-guard.local.txt (same format, not tracked), not in this file.
+
+# Documents, and every repository checkout with its .dev.vars and .env files
+~/Documents
+# The qmd search index holds the full text of the brains.
+~/.cache/qmd
+# Cloud drives, and external drives under any name
+~/Library/CloudStorage
+/Volumes
+
+# Live credentials and sign-ins
+~/.cache/*-key
+~/.cache/*-token
+~/.config/gcloud
+~/.config/gh
+~/.config/op
+~/Library/Preferences/.wrangler
+~/Library/Keychains
+~/.ssh
+~/.gnupg
+~/.aws
+~/.codex/auth.json
+~/.netrc
+~/.pgpass
+# npm and pnpm still run with this file refused; it can hold registry tokens.
+~/.npmrc
+~/.git-credentials
+~/.docker/config.json
+# The tools' own settings and their backups: MCP server env blocks and apiKeyHelper can hold keys.
+~/.codex/config.toml*
+~/.claude.json*
+~/.claude/settings*
+~/.cursor/mcp.json
+
+# Agent transcripts, threads and logs, and shell history
+~/.claude/projects
+~/.claude/audit
+~/.codex/sessions
+~/.codex/archived_sessions
+~/.codex/history.jsonl
+~/.t3/userdata
+~/.*_history
+~/.zsh_sessions
+~/.bash_sessions

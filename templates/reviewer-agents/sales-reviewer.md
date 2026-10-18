@@ -17,7 +17,7 @@ created: 2026-05-07
 updated: 2026-05-07
 ---
 
-# Reviewer agent — sales scope (HOSPITALITY VARIANT — Mawamba template)
+# Reviewer agent — sales scope (HOSPITALITY VARIANT — example)
 
 (Inherits `_base-reviewer.md`. Run those universal checks first, then add the checks below.)
 
@@ -69,7 +69,7 @@ Internal pricing in `sales/playbook.md#pricing` must not **contradict** public p
 - New segment introduced without corresponding public-pricing entry → flag `[pricing-segment-undisclosed]`. Recommend adding public-pricing entry first.
 
 ### 4. Group/corporate segmentation discipline
-The Mawamba playbook is segmented (see `sales/AGENTS.md` for the segments). New playbook content must be filed under the right segment:
+The hospitality playbook is segmented (see `sales/AGENTS.md` for the segments). New playbook content must be filed under the right segment:
 - Boutique-hotels
 - Corporate retreats
 - Group bookings (10+ pax)

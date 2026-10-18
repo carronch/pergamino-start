@@ -45,6 +45,7 @@ Things still unclear. These feed autoresearch.
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Evidence and evolution of the concept. Append-only._
 

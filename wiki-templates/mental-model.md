@@ -57,6 +57,7 @@ is stronger than any single model.
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Your engagement with this model over time._
 

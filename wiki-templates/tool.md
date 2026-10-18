@@ -66,6 +66,7 @@ Where you use or have used this:
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _Append-only. Reverse-chronological. Your ongoing experience with this tool._
 

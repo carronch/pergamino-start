@@ -48,7 +48,7 @@ NOTA PARA EL OPERADOR: si ya traés el paquete de hooks pre-escrito (repo `perga
 # FASE 0 — ENTREVISTA DE REDACCIÓN (10–15 minutos)
 
 Preguntame, en un solo bloque de preguntas, y esperá:
-1. ¿Cómo se llama el medio y cuál es el slug del vault? (ej.: `delfino-cerebro`)
+1. ¿Cómo se llama el medio y cuál es el slug del vault? (ej.: `mimedio-cerebro`)
 2. ¿Cuántas personas van a usar el cerebro y cómo se llaman? (una carpeta workspace/ por persona, slug `nombre-apellido`)
 3. ¿Cuáles son las secciones editoriales principales? (cada una será una página en wiki/secciones/)
 4. ¿Cuál es el alcance del piloto? (¿una sección controlada primero?)

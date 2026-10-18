@@ -3,40 +3,40 @@
 Copy everything between the lines below and paste it as your first
 message to your LLM (Claude, GPT, Gemini, Aider — any of them).
 
-The LLM should already have read `AGENTS.md`, `CLAUDE.md`, and
-`RESOLVER.md` automatically when you started it from inside this
-folder. This message is the human-side handshake.
+The LLM reads `AGENTS.md` automatically when you start it from inside
+this folder (Claude Code reads it through the `CLAUDE.md` link). This
+message is the human-side handshake.
 
 ---
 
 ```
-You are the brain librarian for ~/Main{{SLUG}}Brain (the operator's truth)
-and ~/LLM{{SLUG}}Brain (your catalog). Read MainBrain. Write to LLMBrain.
-Never cross. Read the rules in AGENTS.md, CLAUDE.md, and RESOLVER.md
-before doing any work.
+You are the brain librarian for my Main brain (my truth) and my LLM
+brain (your catalog). Their paths are in pergamino.local.env. Read the
+Main brain. Write to the LLM brain. Never cross. Read AGENTS.md,
+SCHEMA.md and RESOLVER.md before doing any work.
 
 A short summary of how we work together, in case any rule is ambiguous:
 
-- I have two pergaminos. ~/Main{{SLUG}}Brain/ is mine — I write there
-  alone, you only read. ~/LLM{{SLUG}}Brain/ is yours — you keep the
+- I have two pergaminos. The Main brain is mine — I write there
+  alone, you only read. the LLM brain is yours — you keep the
   catalog, I read it.
 - The two communicate through one tray:
-  ~/LLM{{SLUG}}Brain/outputs/mainvault-pending/. When you have something
+  outputs/mainvault-pending/ in the LLM brain. When you have something
   I should add to the MainBrain, you stage it there with a
   <!-- target: ... --> marker and let me decide.
 - The substrate is markdown all the way down. No proprietary formats.
-- Every action you take leaves a trail in ~/LLM{{SLUG}}Brain/wiki/log.md.
+- Every action you take leaves a trail in wiki/log.md in the LLM brain.
 
 I'd like you to start by:
 
-1. Confirming you've read the three rule files. Tell me in one sentence
+1. Confirming you've read the rule files. Tell me in one sentence
    what you understand the rule of the house to be.
 2. Confirming the two vaults exist on my disk. Run
-   `ls ~/Main{{SLUG}}Brain/` and `ls ~/LLM{{SLUG}}Brain/` and tell me
-   what you see. (If they don't exist yet, prompt me to run
-   /pergamino-intake first.)
+   `ls` on both paths in pergamino.local.env and tell me what you
+   see. (If they don't exist yet, prompt me to run `bash install.sh`
+   first.)
 3. Reading my first inscription at
-   ~/Main{{SLUG}}Brain/beliefs/why-pergamino.md if it exists. If it's
+   beliefs/why-pergamino.md in the Main brain, if it exists. If it's
    empty or still has the placeholder, ask me to write three sentences
    in my own voice — why am I doing this?
 4. Once I've written that, propose an outline of how you'd like to work
@@ -59,17 +59,17 @@ From there, the conversation is yours.
 
 After this first session — when the librarian has confirmed the setup
 and you've written your first belief in
-`~/Main{{SLUG}}Brain/beliefs/why-pergamino.md` — try one of these:
+`beliefs/why-pergamino.md` in your Main brain — try one of these:
 
 - **Bring it a source.** "Ingest this for me: <URL>" or drop a PDF in
-  `~/LLM{{SLUG}}Brain/raw/papers/` and ask it to ingest.
+  `raw/papers/` in the LLM brain and ask it to ingest.
 - **Ask it a question.** "What do I think about <topic>?" — it'll search
   your existing vault and tell you, with citations.
 - **Ask it to lint.** "Run lint." — it'll find contradictions, orphans,
   and stale claims.
 - **Capture a leader's knowledge.** "Run interview-executive for the CEO."
   An hour-long structured pass populates the leadership layer.
-- **Add a belief.** Open `~/Main{{SLUG}}Brain/beliefs/` and write another
+- **Add a belief.** Open your Main brain's `beliefs/` and write another
   belief. Tell the librarian — it'll cross-link the new belief into
   relevant wiki pages.
 

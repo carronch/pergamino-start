@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visualize Work"
+  short_description: "Make work clear through evidence-backed visuals"
+  default_prompt: "Use $visualize-work to explain this work with the simplest useful visual and traceable evidence."

@@ -1,6 +1,6 @@
-// CouchDB — one container per client on Daniel's managed server (the sync
-// substrate for LLMVault/LiveSync). SERVER-DEPENDENT: blocked on the host
-// decision (fly.io vs VPS) — see vault workblock 2026-06-15. The runner skips
+// CouchDB — one container per client on the operator's managed server (the sync
+// substrate for the LLM brain via LiveSync). SERVER-DEPENDENT: blocked on the host
+// decision (fly.io vs VPS). The runner skips
 // this unless --allow-server. Contract is in place so wiring is a one-file job.
 //
 // TODO when host is decided:
