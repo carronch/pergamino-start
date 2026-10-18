@@ -88,6 +88,25 @@ out=$(hook "$RECENT" PERGAMINO_HOME="$K" PERGAMINO_LLM_BRAIN="$L" | ctx_of)
 check "recent: the five newest cards; README and a name with a line break are left out" $?
 out=$(hook "$RECENT" PERGAMINO_HOME="$K")
 [[ -z "$out" ]]; check "recent: silent with no LLM brain set" $?
+# GNU stat: `stat -f` prints file-system details, then fails. Those lines must not show up as cards.
+G="$tmp/gnubin"; mkdir -p "$G"
+cat > "$G/stat" <<'FAKE'
+#!/bin/bash
+case "$1" in
+  --version) echo "stat (GNU coreutils) 9.4" ;;
+  -f) echo '  File: "x"'; echo '    ID: 0 Namelen: 255 Type: ext2/ext3'; echo 'Block size: 4096'; exit 1 ;;
+  --printf) shift 2; [ "$1" = "--" ] && shift; for f in "$@"; do /usr/bin/stat -f '%m%t%N' -- "$f"; done ;;
+  *) exit 1 ;;
+esac
+FAKE
+chmod +x "$G/stat"
+out=$(hook "$RECENT" PERGAMINO_HOME="$K" PERGAMINO_LLM_BRAIN="$L" PATH="$G:/usr/bin:/bin" | ctx_of)
+[[ $(printf '%s\n' "$out" | grep -c '^  - ') == 5 && "$out" == *"2030-01-06-c6.md"* && "$out" != *Namelen* && "$out" != *"File:"* ]]
+check "recent: GNU stat lists the five newest cards and nothing else" $?
+L1="$tmp/one-card-brain"; mkdir -p "$L1/wiki/workblocks"; printf -- '---\ntitle: solo\n---\n' > "$L1/wiki/workblocks/2030-02-01-solo.md"
+out=$(hook "$RECENT" PERGAMINO_HOME="$K" PERGAMINO_LLM_BRAIN="$L1" PATH="$G:/usr/bin:/bin" | ctx_of)
+[[ $(printf '%s\n' "$out" | grep -c '^  - ') == 1 && "$out" == *"2030-02-01-solo.md"* ]]
+check "recent: GNU stat with one card lists exactly that card" $?
 
 # ---------- stale-projects.sh ----------
 rm -f "$W"/*.md

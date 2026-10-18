@@ -33,35 +33,35 @@ reason=""
 # --- 1. Network egress with a payload ----------------------------------------
 # Reading a URL is fine; SENDING data outward is not. Match POST/PUT/upload forms
 # and any curl/wget carrying data flags.
-if echo "$cmd" | grep -qiE '\b(curl|wget|http|httpie)\b' \
-   && echo "$cmd" | grep -qE '(-X[[:space:]]*(POST|PUT|PATCH)|--data|--data-raw|--data-binary|--upload-file|-d[[:space:]]|-T[[:space:]]|--form|-F[[:space:]])'; then
+if grep -qiE '\b(curl|wget|http|httpie)\b' <<<"$cmd" \
+   && grep -qE '(-X[[:space:]]*(POST|PUT|PATCH)|--data|--data-raw|--data-binary|--upload-file|-d[[:space:]]|-T[[:space:]]|--form|-F[[:space:]])' <<<"$cmd"; then
   reason="network egress with a payload (curl/wget POST/PUT/upload)"
 fi
 
 # --- 2. Piping content into a network client ---------------------------------
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\|[[:space:]]*(curl|wget|nc|ncat|netcat|ssh|mail|sendmail|telnet)\b'; then
+if [[ -z "$reason" ]] && grep -qE '\|[[:space:]]*(curl|wget|nc|ncat|netcat|ssh|mail|sendmail|telnet)\b' <<<"$cmd"; then
   reason="piping local content into a network client"
 fi
 
 # --- 3. Credential and secret reads ------------------------------------------
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '(\.ssh/|\.aws/|\.config/gh/|\.claude/\.credentials|\.cache/[^[:space:]]*-(key|token)|id_rsa|id_ed25519|\.env\b|\.dev\.vars)'; then
+if [[ -z "$reason" ]] && grep -qE '(\.ssh/|\.aws/|\.config/gh/|\.claude/\.credentials|\.cache/[^[:space:]]*-(key|token)|id_rsa|id_ed25519|\.env\b|\.dev\.vars)' <<<"$cmd"; then
   reason="reading a credential or secret store"
 fi
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\b(wrangler|npx wrangler|pnpm exec wrangler)\b.*\bsecret\b'; then
+if [[ -z "$reason" ]] && grep -qE '\b(wrangler|npx wrangler|pnpm exec wrangler)\b.*\bsecret\b' <<<"$cmd"; then
   reason="touching Cloudflare Worker secrets"
 fi
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\bop\b[[:space:]]+(item|read|signin)'; then
+if [[ -z "$reason" ]] && grep -qE '\bop\b[[:space:]]+(item|read|signin)' <<<"$cmd"; then
   reason="reading from 1Password"
 fi
 
 # --- 4. Pushing outward -------------------------------------------------------
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\bgit[[:space:]]+push\b'; then
+if [[ -z "$reason" ]] && grep -qE '\bgit[[:space:]]+push\b' <<<"$cmd"; then
   reason="git push"
 fi
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\bgh[[:space:]]+(pr[[:space:]]+create|issue[[:space:]]+create|gist[[:space:]]+create|release[[:space:]]+create|repo[[:space:]]+(create|edit|delete))'; then
+if [[ -z "$reason" ]] && grep -qE '\bgh[[:space:]]+(pr[[:space:]]+create|issue[[:space:]]+create|gist[[:space:]]+create|release[[:space:]]+create|repo[[:space:]]+(create|edit|delete))' <<<"$cmd"; then
   reason="creating or modifying something on GitHub"
 fi
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\b(wrangler|npx wrangler|pnpm exec wrangler)\b.*\b(deploy|publish|r2 object put|d1 execute)\b'; then
+if [[ -z "$reason" ]] && grep -qE '\b(wrangler|npx wrangler|pnpm exec wrangler)\b.*\b(deploy|publish|r2 object put|d1 execute)\b' <<<"$cmd"; then
   reason="deploying or writing to Cloudflare"
 fi
 
@@ -80,7 +80,7 @@ if [[ -z "$reason" ]]; then
 fi
 
 # --- 6. Downloading and executing --------------------------------------------
-if [[ -z "$reason" ]] && echo "$cmd" | grep -qE '\b(curl|wget)\b[^|]*\|[[:space:]]*(bash|sh|zsh|python3?|node)\b'; then
+if [[ -z "$reason" ]] && grep -qE '\b(curl|wget)\b[^|]*\|[[:space:]]*(bash|sh|zsh|python3?|node)\b' <<<"$cmd"; then
   reason="download-and-execute (curl | bash)"
 fi
 

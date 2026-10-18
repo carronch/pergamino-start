@@ -57,7 +57,12 @@ read_env() {
   [ -f "$ENV_FILE" ] || return 0
   sed -n "s/^$1=//p" "$ENV_FILE" | tail -1 | sed -e 's/^"//' -e 's/"$//' -e "s|^~|$HOME|"
 }
-expand() { printf '%s' "${1/#\~/$HOME}"; }
+# Expand ~ and make the path absolute: hooks resolve paths from the kit folder, not from here.
+expand() {
+  local p="${1/#\~/$HOME}"
+  case "$p" in /*) ;; *) p="$PWD/$p" ;; esac
+  printf '%s' "${p%/}"
+}
 
 # An older kit used ~/Main<Name>Brain and ~/LLM<Name>Brain. Offer one if it is there.
 guess() {
@@ -133,9 +138,15 @@ ok "Skills linked for Claude Code and Codex; hooks executable"
 # The brains sit outside the kit folder, so Claude Code would ask for every file.
 # .claude/settings.local.json is yours and never committed; add the two paths to it.
 LOCAL_SETTINGS="$KIT/.claude/settings.local.json"
-if [ ! -f "$LOCAL_SETTINGS" ]; then
-  python3 -I -c 'import json,sys; print(json.dumps({"permissions":{"additionalDirectories":sys.argv[1:]}},indent=2))' "$MAIN" "$LLM" > "$LOCAL_SETTINGS" \
-    && ok "Claude Code may work in both brains (.claude/settings.local.json)"
+if ! command -v python3 >/dev/null 2>&1; then
+  warn "python3 is missing, so .claude/settings.local.json was not written. Install python3 and run install.sh again."
+elif [ ! -f "$LOCAL_SETTINGS" ]; then
+  tmp="$(mktemp "$KIT/.claude/.settings.local.XXXXXX")"
+  if python3 -I -c 'import json,sys; print(json.dumps({"permissions":{"additionalDirectories":sys.argv[1:]}},indent=2))' "$MAIN" "$LLM" > "$tmp"; then
+    mv "$tmp" "$LOCAL_SETTINGS"; ok "Claude Code may work in both brains (.claude/settings.local.json)"
+  else
+    rm -f "$tmp"; warn "Could not write .claude/settings.local.json."
+  fi
 elif python3 -I - "$LOCAL_SETTINGS" "$MAIN" "$LLM" <<'PYADD'
 import json, os, shutil, sys, tempfile, time
 path, dirs = sys.argv[1], sys.argv[2:]
@@ -165,7 +176,13 @@ if command -v qmd >/dev/null 2>&1; then
   for pair in "main:$MAIN" "llm:$LLM"; do
     name="${pair%%:*}"; path="${pair#*:}"
     if printf '%s\n' "$have" | grep -q "^$name "; then
-      ok "qmd collection '$name' already exists"
+      registered="$(qmd collection show "$name" 2>/dev/null | sed -n 's/^ *Path: *//p' | head -1)"
+      if [ -z "$registered" ] || [ "${registered%/}" = "${path%/}" ]; then
+        ok "qmd collection '$name' already exists"
+      else
+        warn "qmd collection '$name' points at $registered, not $path. To move it:"
+        echo "       qmd collection remove $name && qmd collection add \"$path\" --name $name"
+      fi
     elif qmd collection add "$path" --name "$name" >/dev/null 2>&1; then
       ok "qmd collection '$name' → $path"
     else
