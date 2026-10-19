@@ -23,3 +23,14 @@ Thumbs.db
 
 # Wrangler local cache (contains CF account ID — never commit)
 .wrangler/
+
+# Local to each computer (install.sh writes these; updates never touch them)
+pergamino.local.env
+pergamino.local.env.bak-*
+.pergamino.env.*
+AGENTS.local.md
+.claude/settings.local.json
+.claude/settings.local.json.bak-*
+.claude/.settings.local.*
+reviewer-guard.local.txt
+__pycache__/

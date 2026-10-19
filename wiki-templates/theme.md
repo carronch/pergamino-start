@@ -2,6 +2,8 @@
 kind: theme
 title: "{{title}}"
 cluster: work | interest | teaching
+# to park the theme (opts out of the lint check for themes without your own words), uncomment the next line as-is:
+# status: dormant
 created: {{date}}
 updated: {{date}}
 source_count: 0
@@ -22,7 +24,7 @@ What you're working toward believing. Tentative, dated, revisable.
 - **As of {{date}}:** <your current take in 2–3 sentences>
 
 When this crystallizes into a firm position, graduate it to
-`~/Main{{SLUG}}Brain/beliefs/` and leave a link here.
+the Main brain's `beliefs/` and leave a link here.
 
 ## Open questions
 
@@ -75,11 +77,12 @@ What would need to be true for this theme to produce something?
 
 - [ ] Essay or blog post
 - [ ] Concrete project
-- [ ] Committed belief in the MainBrain (`beliefs/` or `principles/`)
+- [ ] Committed belief in the Main brain (`beliefs/` or `principles/`)
 - [ ] Teaching material
 
 ---
 
+<!-- timeline -->
 ## Timeline
 _How your thinking on this theme has evolved._
 

@@ -76,7 +76,7 @@ Output the recommendation in the `Suggested reviewer` field.
 ### 5. Voice-translation suggestion
 If voice mismatch is the only issue, suggest a translation pattern in the reasoning. Example:
 
-> "The sales-rep wrote 'I closed Casa Boutique on Tuesday' — that voice doesn't fit `company/clients/`. The target scope expects: 'Mawamba began engagement with Casa Boutique on 2026-05-07.' Recommend revision before merge."
+> "The sales-rep wrote 'I closed Hotel Example on Tuesday' — that voice doesn't fit `company/clients/`. The target scope expects: 'The company began engagement with Hotel Example on 2026-05-07.' Recommend revision before merge."
 
 This is a soft suggestion; the human reviewer decides whether to enforce it.
 

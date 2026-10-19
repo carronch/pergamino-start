@@ -1,6 +1,11 @@
+---
+name: karpathy-discipline
+description: "Four always-on working principles for wiki maintenance: think before writing, simplicity first, surgical changes, and goal-driven execution with verifiable checks. Use before any non-trivial ingest or wiki restructure, when the author says 'you are doing too much' or 'keep it surgical', and whenever a request is ambiguous."
+---
+
 # Skill: Karpathy-discipline
 
-Four principles adapted from Karpathy's observations on LLM coding pitfalls,
+Four principles adapted from [Karpathy's observations on LLM coding pitfalls](https://github.com/forrestchang/andrej-karpathy-skills),
 applied to wiki maintenance rather than code.
 
 These aren't a workflow — they're always-on behaviors. When you're

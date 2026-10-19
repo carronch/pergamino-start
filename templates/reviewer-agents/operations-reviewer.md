@@ -17,7 +17,7 @@ created: 2026-05-07
 updated: 2026-05-07
 ---
 
-# Reviewer agent — operations scope (HOSPITALITY VARIANT — Mawamba template)
+# Reviewer agent — operations scope (HOSPITALITY VARIANT — example)
 
 (Inherits `_base-reviewer.md`. Run those universal checks first, then add the checks below.)
 

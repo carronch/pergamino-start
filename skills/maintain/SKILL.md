@@ -1,104 +1,245 @@
-# Skill: Maintain — the Compound step
+---
+name: maintain
+description: "Keep the LLM brain's wiki coherent: a 30-second orientation before an ingest, a 2-minute settling pass after it (re-read, back-links, index, emerging patterns), a pattern read when the author asks, and an on-demand maintenance sweep that writes a dated health report. Use when ingest calls it, when the author asks 'what's emerging?', 'what's the pattern?' or 'run a maintenance sweep', or after 10–20 ingests."
+---
 
-Maintain is the librarian's fourth step in every cycle. After every ingest, every query that surfaced something, every session of substantial work — pause and re-read what you wrote. Ask: *what pattern is emerging?*
+# Skill: Maintain the wiki
 
-This is the equivalent of the **Compound step** in Every's compound-engineering loop, applied to a knowledge vault rather than a codebase.
+Maintain is the compound step of every cycle. After an ingest, after a query that surfaced
+something, after a session of substantial work: pause, re-read what you wrote, and ask
+*what pattern is emerging?*
 
-## When to invoke
+Paths are relative to the LLM brain (`$PERGAMINO_LLM_BRAIN`). The Main brain is `$PERGAMINO_MAIN_BRAIN`.
 
-- **Mode 1: Pre-ingest orientation.** Before starting an ingest, glance at `wiki/log.md` recent entries and active concept/theme pages. 30 seconds. The point is to know what's been touched recently so the new ingest connects rather than duplicates.
-- **Mode 2: Post-ingest settling.** After an ingest finishes, re-read what you wrote. Verify cross-links, flag emerging patterns, propose new concepts or syntheses if warranted.
-- **Mode 3: Author asks.** *"What's the pattern?"*, *"What's emerging?"*, *"Read the last week and tell me what you see."* — these are explicit invitations to a maintain pass.
-- **Mode 4: Periodic.** Once every 10–20 ingests, even unprompted. Surface to the author: *"I'd like to do a maintain pass. Three minutes."*
+| Mode | When | How it starts |
+|------|------|---------------|
+| 1. Pre-ingest | Before you process a new source | `ingest` calls it |
+| 2. Post-ingest | After an ingest | `ingest` calls it |
+| 3. Pattern read | The author asks "what's emerging?" | The author |
+| 4. Sweep | On demand, a full health report | The author says "run a maintenance sweep" |
 
-## Mode 1: Pre-ingest orientation
+Every 10–20 ingests, offer a pattern read or a sweep: "I would like to do a maintain pass. Three minutes." Do not run it without the author's yes.
 
-Before starting an ingest:
+The brain does not maintain itself. The author and the agent maintain it together, during conversations.
+A scheduled job can run deterministic checks, but a sweep's proposals still wait for the author.
 
-1. Read the last 3 entries in `wiki/log.md`.
-2. Read the headings of `_index.md`.
-3. Glance at any concept or theme pages your incoming source is likely to touch.
+---
 
-Tell the author one line: *"Last 3 ingests touched [X, Y, Z]. The incoming source connects to [[concepts/foo]] — I'll extend that page rather than create a new one."*
+## Mode 1 — Pre-ingest (30 seconds, automatic)
 
-Then proceed with ingest. Total time: 30 seconds. The point is *connection*, not deep analysis.
+Before you process a new source, scan the context quickly:
 
-## Mode 2: Post-ingest settling
+```bash
+# What changed recently?
+tail -40 "$PERGAMINO_LLM_BRAIN/wiki/log.md"
 
-After an ingest finishes:
-
-1. Re-read the new summary you wrote. Does the TL;DR actually capture the source? If not, fix it.
-2. Walk the cross-references. Every wiki-link in the summary — does it resolve to a real page? Did you remember to update those pages' `backlinks:`?
-3. Re-read the entity pages you updated. Do the additions read coherently with what was already there, or did you tack something on awkwardly?
-4. Check for emerging patterns:
-   - Has this concept been referenced in 3+ summaries now? If so, it might warrant promotion from a passing mention to a full concept page (the **rule of three**).
-   - Has this theme accumulated 5+ sources? Time to update its `## Current thesis`.
-   - Did the new source create a tension with another summary or a Main{{SLUG}}Brain belief? Make sure that tension is captured, not buried.
-5. Append a 1–2 line maintain note to `wiki/log.md` *under* the ingest entry:
-
-```
-## [YYYY-MM-DD] ingest | Source title
-- summary: ...
-- (existing ingest entry)
-
-  → maintain: cross-links verified; concept [[X]] now at 3 references — propose promotion in next session.
+# What did the last sessions leave open?
+grep -rA2 "Open threads\|Open questions" "$PERGAMINO_LLM_BRAIN"/wiki/projects/*.md 2>/dev/null | tail -20
 ```
 
-Total time: 1–2 minutes. Most of the value comes from *forcing yourself to look back.*
+Read the headings of `wiki/_index.md` and glance at the concept or theme pages that the source is likely to touch.
 
-## Mode 3: Author asks
+Ask yourself:
 
-When the author says *"what's emerging?"* or similar, do a deeper pass:
+- Is this new source related to the last few ingests? (If yes, extend
+  existing pages and do not create new ones.)
+- Did the last session leave open threads that this source might close?
+- Which projects is it likely to touch? Skim those first.
+
+Report in one line:
+
+> *"The last 3 ingests touched [projects/X, tools/Y].
+> This source continues the thread on [topic], so I will update
+> [page] and not create a new one."*
+
+Then proceed with the ingest. The point is *connection*, not deep analysis.
+
+---
+
+## Mode 2 — Post-ingest (2 minutes, automatic)
+
+After an ingest, before you call it done:
+
+1. **Re-read the pages you wrote.** Read them; do not skim. Does the TL;DR capture the source?
+   Are the claims defensible and the citations real? Is there generic filler to remove?
+   Do the additions to entity pages read coherently with what was already there?
+
+2. **Verify the back-links.** For every tool, project or concept linked from the
+   summary, confirm that the target page's Timeline has a matching entry that
+   references the summary. Iron rule: an unlinked mention is a broken wiki.
+
+3. **Rebuild the index.**
+   ```bash
+   bash "$PERGAMINO_HOME/scripts/rebuild-index.sh" "$PERGAMINO_LLM_BRAIN"
+   ```
+   It is deterministic and takes under a second. Do not skip it.
+
+4. **Surface emerging patterns.**
+   - The third source that mentions a concept with no concept page (the rule of three):
+     > "This is the third source that mentions <topic>. Create `concepts/<slug>.md`?"
+   - A theme with 5 or more sources: propose an update of its `## Current thesis`.
+   - A new tension with another summary or with a Main brain belief: make sure that it is recorded, not buried.
+
+5. **Note open threads.** Unresolved questions go on the relevant page,
+   under "Open threads", so that `autoresearch` can pick them up later.
+
+6. **Add a maintain note** of 1–2 lines to `wiki/log.md`, under the ingest entry:
+   ```
+     → maintain: cross-links verified; concept [[X]] now at 3 references — propose promotion next session.
+   ```
+
+---
+
+## Mode 3 — Pattern read (on request, under 200 words)
+
+When the author says "what's emerging?" or similar:
 
 1. Read `wiki/log.md` for the period the author cares about (last week, last month).
-2. Walk the most-recently-updated concept and theme pages.
+2. Walk the most recently updated concept and theme pages.
 3. Look for:
-   - **Emerging concepts** — patterns that show up across 3+ recent ingests but don't yet have a concept page.
-   - **Drifting theses** — themes whose `## Current thesis` is older than the most recent contradicting source. Time to propose an update.
-   - **Cross-theme connections** — when two themes start citing the same sources, that's signal. Worth surfacing.
-   - **Absent topics** — what hasn't been written about that the author seems to be circling?
+   - **Emerging concepts**: patterns in 3 or more recent ingests without a concept page.
+   - **Drifting theses**: themes whose `## Current thesis` is older than the newest contradicting source.
+   - **Cross-theme connections**: two themes that start to cite the same sources.
+   - **Absent topics**: what the author seems to circle but has not written about.
 
-Report in chat. Under 200 words:
+Report in chat:
 
 ```
 Maintain — past <period>:
 
 Emerging:
 - <pattern A>: now at N citations. Suggest concept page [[concepts/<slug>]].
-- <pattern B>: ...
 
 Drifting:
-- Theme [[themes/foo]]'s thesis hasn't been updated since <date>; recent sources X, Y, Z suggest <revision>.
+- Theme [[themes/foo]]'s thesis has not changed since <date>; sources X, Y, Z suggest <revision>.
 
 Cross-theme:
-- [[themes/A]] and [[themes/B]] are converging on <topic>. Worth a synthesis?
+- [[themes/A]] and [[themes/B]] converge on <topic>. Worth a synthesis?
 
 Quiet:
-- Theme [[themes/Z]] hasn't been touched in <X> months. Archive or revive?
+- Theme [[themes/Z]] has not been touched in <N> months. Archive or revive?
 ```
 
 Wait for the author to choose what to act on.
 
-## Mode 4: Periodic (unprompted)
+---
 
-After every 10–20 ingests, surface a maintain offer to the author. Don't run it without permission — but do *flag* that it might be due.
+## Mode 4 — Sweep (on demand, 15–30 minutes)
 
-## Rules
+Starts when the author says "run a maintenance sweep". Run the deterministic
+checks first, then the semantic work.
 
-- **Never auto-promote a concept to a page** without the author's nod. Surface, propose, wait.
-- **Never auto-rewrite a theme's `## Current thesis`** without the author's nod. Propose the change in chat; let the author bless it before editing.
-- **Never delete or archive on the author's behalf.** Lint and maintain surface candidates; the author acts.
-- **Maintain is short.** If you find yourself spending 10+ minutes, you're doing analysis, not maintenance. Stop and ask the author what they want.
+### Deterministic checks (run these first)
 
-## What this skill does NOT do
+```bash
+# Rebuild the index and the graph from the directory tree
+bash "$PERGAMINO_HOME/scripts/rebuild-index.sh" "$PERGAMINO_LLM_BRAIN"
+```
 
-- It doesn't ingest new sources. (See `ingest`.)
-- It doesn't run external research. (See `deep-ingest`.)
-- It doesn't do schema or contradiction-checking. (See `lint`.)
-- It doesn't write to Main{{SLUG}}Brain. Stage proposals in the tray.
+Then run `skills/lint/SKILL.md` for orphans, broken wikilinks and missing concept pages.
+Capture the counts: they go into the report's health snapshot.
+
+### Your job during a sweep
+
+Write a report at `wiki/syntheses/maintain-YYYY-MM-DD.md`. Template:
+
+```markdown
+---
+kind: synthesis
+title: "Maintenance sweep — YYYY-MM-DD"
+created: YYYY-MM-DD
+tags: [maintenance]
+---
+
+# Maintenance sweep — YYYY-MM-DD
+
+## Health snapshot
+- Total pages: N
+- Active projects: N
+- Decisions (all time): N, superseded: N
+- Orphans flagged by lint: N
+- Broken wikilinks flagged by lint: N
+
+## What compounded since the last sweep
+- <projects that moved>
+- <decisions recorded>
+- <concepts that gained connections>
+- <tools that gained experience notes>
+
+## What's rotting
+- <project pages with status: active but no Timeline entry in 30+ days>
+- <tool pages with no "Your experience" content>
+- <decisions 90+ days old worth revisiting>
+- <architecture decision records whose context may have shifted>
+
+## Contradictions flagged (not resolved)
+- <page A says X. page B says Y. suggest: ___>
+- <tool page says X. Main brain belief on the topic says Y. Truth wins — revise the tool page?>
+
+## Stale decisions worth revisiting
+- [[decisions/YYYY-MM-DD-slug]] — recorded N days ago. The context may have
+  shifted because ___. Confirm, update or supersede?
+
+## Tool pages thin on experience
+- [[tools/...]] — used in 3+ projects but no "Your experience" section.
+  Do you want to add observations now?
+
+## Gaps worth researching (feed to autoresearch if approved)
+- <open question from a project page>
+- <tool mentioned across sources but no page yet>
+
+## Beliefs possibly affected
+- <Main brain file> — <what the sweep found>. Flag only; no proposal.
+
+## Proposed actions (nothing applied without approval)
+- [ ] Merge tools/a.md and tools/b.md (duplicate — same tool, different names)
+- [ ] Promote syntheses/x.md into concepts/y.md (cited by 4 other pages)
+- [ ] Archive projects/z.md (marked abandoned, no Timeline entries in 6 months)
+- [ ] Supersede decisions/YYYY-MM-DD-a.md with a new decision record
+```
+
+Log:
+
+```
+## [YYYY-MM-DD] maintain | sweep
+- report: wiki/syntheses/maintain-YYYY-MM-DD.md
+- N issues flagged, 0 auto-fixed
+```
+
+---
+
+## Principles
+
+1. **Propose, do not apply.** Destructive changes (merge, archive, supersede)
+   and new concept pages need the author's approval. Never rewrite a theme's
+   `## Current thesis` without the author's nod.
+2. **Truth is sacred.** Never propose edits to the Main brain from a sweep. Propose wiki
+   revisions that align with the Main brain when they disagree, never the reverse.
+3. **The maintenance reports are their own artifact.** Read in
+   order, they tell the story of the brain. Keep them readable:
+   no boilerplate padding.
+4. **The second time is a pattern.** If the same fix appears in two
+   consecutive sweeps, add a deterministic check to `skills/lint/SKILL.md`,
+   so that lint catches it without semantic work.
+5. **Less is more.** 50 well-connected, current, cited pages beat 500
+   orphaned fragments. When in doubt, archive.
+6. **Follow the brain's focus.** Prioritize what the author builds:
+   active projects with recent Timeline entries, decision records that can be revisited,
+   tools with real experience notes.
+7. **Keep modes 1–3 short.** If a pass takes 10 or more minutes, you are doing analysis,
+   not maintenance. Stop and ask the author what they want.
+
+## What maintain is NOT
+
+- **Not a rewrite of old pages to match the current style.** Style evolves. Old
+  pages stay as they are unless they are factually wrong.
+- **Not deletion of anything the author has not seen.** Archive (move to
+  `wiki/<dir>/archive/`). Do not delete.
+- **Not editorializing truth.** If a sweep surfaces reasons the author might
+  want to update a belief, flag it under "Beliefs possibly affected" in
+  the report and stop.
+- **Not ingest** (see `ingest`), **not external research** (see `deep-ingest`, `research`), **not the full contradiction and schema check** (see `lint`).
 
 ## The point of maintain
 
-Most knowledge bases die not from a single bad decision but from *not noticing*. Notes accumulate. Concepts repeat. Themes drift. Without a maintain rhythm, the substrate becomes a mound. With one, it stays *alive* — every ingest connects to what came before, every theme's thesis is current as of the last source, every emerging pattern gets a name.
-
-The author's compound is not the volume of sources ingested. It is the *coherence* of the catalog at any moment. Maintain is what produces that coherence.
+Most knowledge bases die not from one bad decision but from *not noticing*. Notes accumulate. Concepts repeat. Themes drift. With a maintain rhythm, every ingest connects to what came before, every theme's thesis is current as of its last source, and every emerging pattern gets a name. The measure is not the volume of sources. It is the coherence of the catalog at any moment.

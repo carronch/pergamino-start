@@ -41,8 +41,8 @@ Each reviewer is composed at runtime as:
 | `customer-facing-reviewer.md` | universal | Strictest. Most clients have a customer-facing surface. |
 | `principal-reviewer.md` | universal | Audit-only mode for CEO/founder/owner self-approve. |
 | `cross-scope-reviewer.md` | universal | Runs ON TOP of source-scope reviewer when PR crosses scopes. |
-| `sales-reviewer.md` | variable (hospitality, Mawamba template) | Tune per vertical. |
-| `operations-reviewer.md` | variable (hospitality, Mawamba template) | Tune per vertical. |
+| `sales-reviewer.md` | variable (hospitality example) | Tune per vertical. |
+| `operations-reviewer.md` | variable (hospitality example) | Tune per vertical. |
 | `finance-reviewer.md` | variable (mostly transferable, strict everywhere) | Most clients have finance; rules transfer well. |
 
 ## Output format (uniform across all reviewers)
@@ -109,8 +109,8 @@ For each new client deployment, the operator acts as co-reviewer alongside the A
 - `customer-facing-reviewer.md` — universal: outbound-to-customers scope (strictest)
 - `principal-reviewer.md` — universal: CEO/founder/owner private scope (audit-only)
 - `cross-scope-reviewer.md` — universal: runs on top of source-scope when a PR crosses scopes
-- `sales-reviewer.md` — Mawamba-template (hospitality vertical)
-- `operations-reviewer.md` — Mawamba-template (hospitality vertical)
+- `sales-reviewer.md` — hospitality example
+- `operations-reviewer.md` — hospitality example
 - `finance-reviewer.md` — variable (transferable, strictest)
 
 ## Companion documents

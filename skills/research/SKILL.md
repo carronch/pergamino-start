@@ -1,4 +1,11 @@
+---
+name: research
+description: "Deepen a long-running theme in the LLM brain over weeks: establish the theme page and its cluster, gather sources through ingest, propose syntheses, and watch for graduation into an essay, a project, a decision or a Main brain belief. Use when the author says 'I want to go deeper on <topic>', 'let's research <theme>', 'help me build a view on <topic>', or when a query shows that a theme is thin."
+---
+
 # Skill: Research a theme
+
+Paths are relative to the LLM brain (`$PERGAMINO_LLM_BRAIN`). The Main brain is `$PERGAMINO_MAIN_BRAIN`.
 
 Research is different from building. Building produces artifacts and has
 a "done" state; research deepens over time and produces understanding.
@@ -20,7 +27,7 @@ Research produces:
   reusable frameworks extracted
 - **Source summaries** (`wiki/summaries/`) — one per book, essay, talk,
   podcast ingested under the theme
-- **Eventually**: essays, decisions, beliefs graduated to the MainBrain, or projects
+- **Eventually**: essays, decisions, beliefs graduated to the Main brain, or projects
 
 ## Phase 1 — Establish the theme
 
@@ -40,18 +47,20 @@ When the author first mentions a research topic, walk RESOLVER. Almost certainly
    Ask the author if not obvious: *"Is this for work (feeds a business or
    project), personal interest, or for teaching others?"*
 
-2. Create `wiki/themes/<slug>.md` from `wiki-templates/theme.md` with the
+2. Create `wiki/themes/<slug>.md` from `"$PERGAMINO_HOME/wiki-templates/theme.md"` with the
    cluster field set.
 3. Populate what's already known from existing wiki content:
    ```bash
-   grep -rl "<theme keywords>" ~/LLM{{SLUG}}Brain/wiki/
+   qmd search "<theme keywords>" -c llm
    ```
+   Without `qmd`: `grep -rli "<theme keywords>" "$PERGAMINO_LLM_BRAIN/wiki/"`.
    Any existing summaries, concepts, or syntheses that touch the theme get
    linked into the theme page.
-4. Check the MainBrain for existing positions:
+4. Check the Main brain for existing positions:
    ```bash
-   grep -rl "<theme keywords>" ~/Main{{SLUG}}Brain/
+   qmd search "<theme keywords>" -c main
    ```
+   Without `qmd`: `grep -rli "<theme keywords>" "$PERGAMINO_MAIN_BRAIN/"`.
    If the author already has a belief on this topic, note it prominently in
    the theme page's "Current thesis" section as the starting point.
 5. Propose 3–5 open questions. These seed the research direction.
@@ -99,7 +108,7 @@ Watch for signs the theme is producing output:
   offer to extract an outline from the theme page as a starting draft.
 - **Committed belief**: if the thesis has stabilized for 60+ days, prompt:
   > "Your thesis on this theme hasn't changed in 60 days. Want to commit
-  > it to the MainBrain `beliefs/`?"
+  > it to the Main brain `beliefs/`?"
 - **Concrete project**: if the theme suggests something to build, propose
   a project page spin-off.
 - **Decision**: if research has informed a specific choice, propose an ADR.
@@ -117,6 +126,11 @@ When ingesting under an active theme:
 - Think about the theme's current thesis — does this source strengthen or
   challenge it?
 - If either, propose updating the theme page in Phase 3 style.
+
+## Related skills
+
+- `deep-ingest` runs Phase 2 only, with a cap of 3 adjacent sources, for one URL.
+- `autoresearch` runs the gap-finding loop across the whole wiki.
 
 ## Rules
 
